@@ -14,23 +14,19 @@ public class DBManager {
 	private String url;
 	
 	public DBManager(String password, String inputFile) {
-		this.password = password;
 		this.inputFile = inputFile;
 		this.model = new ResultsModel();
 		this.user = "root";
 		this.url = "jdbc:mysql://localhost/Phase3";
-		this.setupDatabase();
+		this.setupDatabase(password);
+		
+		this.openConnection(password);
 		
 		this.populateDatabase();
 	}
 	
-	private void openConnection() {
+	private void openConnection(String password) {
 		try {
-			if (conn != null) {
-				conn.close();
-				model.setResultSet(null);
-			}
-			
 			conn = DriverManager.getConnection(url, user, password);
 			stmt = conn.createStatement();
 		} catch (SQLException sql) {
@@ -38,8 +34,9 @@ public class DBManager {
 		}
 	}
 	
-	private void closeConnection() {
+	public void closeConnection() {
 		try {
+			// TODO: add code to clear out the database tables
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -47,44 +44,39 @@ public class DBManager {
 	}
 	
 	public String[] getAllTableData() {
-		this.openConnection();
+		model.setResultSet(null);
 		try {
 			model.setResultSet(stmt.executeQuery("SELECT * FROM Student"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.closeConnection();
 		return model.getFormattedData();
 	}
 	
 	public String[] runQuery(String sqlQuery) {
-		this.openConnection();
+		model.setResultSet(null);
 		try {
 			model.setResultSet(stmt.executeQuery(sqlQuery));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.closeConnection();
 		return model.getData();
 	}
 	
 	public void execUpdate(String sqlUpdate) {
-		this.openConnection();
+		model.setResultSet(null);
 		try {
 			stmt.executeUpdate(sqlUpdate);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.closeConnection();		
 	}
 	
-	private void setupDatabase() {
+	private void setupDatabase(String password) {
 		DatabaseCreator.createPhase3Database(password);
 	}
 	
 	private void populateDatabase() {
-		this.openConnection();
 		DBDataParser.populateDatabase(stmt, inputFile);
-		this.closeConnection();
 	}
 }

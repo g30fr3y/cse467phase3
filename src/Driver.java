@@ -14,12 +14,12 @@ public class Driver {
 			PrintWriter pw = new PrintWriter( fw );
 
 			for (int i = 0; i < 100; i++) {
-				String output = i + ";";
-				output += (int)(Math.random()*10000) + ";";
-				output += Math.abs(((int)(Math.random()*100)-50)) + ";";
-				output += (int)(Math.random()*10) + ";";
-				output += (int)(Math.random()*10)+1980 + ";";
-				output += (int)(Math.random()*10)+1980;
+				String output = i + ";";				// ProductID : 0000-9999 (Unique Key)
+				output += (int)(Math.random()*11111) + ";";	// Price :     0-99,999
+				output += Math.abs(((int)(Math.random()*100)-50)) + ";"; // DeptID:     0-50 
+				output += (int)(Math.random()*10) + ";"; 	// Weight :    0-9
+				output += (int)(Math.random()*30)+1980 + ";"; // ProductYear:  1980-2010
+				output += (int)(Math.random()*35)+1980; // ExpireYear:   StartYear-2015 (or empty, 20% chance)
 				//System.out.println(output);
 				pw.println( output );
 			}
@@ -35,6 +35,7 @@ public class Driver {
 		for (String s : info) {
 			System.out.println(s);
 		}
+		dbManager.closeConnection();
 	}
 
 }
