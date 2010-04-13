@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import jxl.Workbook;
 import jxl.write.Label;
+import jxl.write.Number;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
@@ -21,6 +22,7 @@ public class RandomDataGenerator
 {
     /* *****Begin: Global Variables***** */ 
     static final String EXCEL_FILENAME = "test.xls";
+    static final String EXCEL_SHEETNAME = "Sheet1";
     static final String[] HEADINGS = {"Product ID","Price","DeptID","Weight","Product Year","Expire Year"};
     
     // Index names
@@ -32,8 +34,8 @@ public class RandomDataGenerator
                      EXPIREYEAR  = 5;
     
     // Random Variable Bounds
-    static final int PRODUCT_COUNT  = 10,
-                     MAX_PRICE      = 99999,
+    static int PRODUCT_COUNT  = 10;       // Alter this variable to  
+    static final int MAX_PRICE      = 99999,
                      MAX_DEPT_ID    = 50,
                      MAX_WEIGHT     = 9,
                      START_YEAR     = 1980,
@@ -42,7 +44,8 @@ public class RandomDataGenerator
     static final int NUM_HEADINGS = HEADINGS.length;
     
     // Create a 2d array to hold all the data
-    static final int[][] ROW_VALUES = new int[PRODUCT_COUNT + 1][NUM_HEADINGS];
+    static int[][] ROW_VALUES = new int[PRODUCT_COUNT + 1][NUM_HEADINGS];
+    
     
     /* *****End: Global Variables***** */
     
@@ -51,11 +54,22 @@ public class RandomDataGenerator
      */
     public static void main(String[] args)
     {
-//        createExcel(EXCEL_FILENAME, PRODUCT_COUNT);
-        createRandomData();
+        // Get's the value from the command line, otherwise just defaults to 10
+        if (args.length == 1)
+        {
+            PRODUCT_COUNT = Integer.parseInt(args[0]);
+            ROW_VALUES = new int[PRODUCT_COUNT + 1][NUM_HEADINGS];
+        }
+        
+        createExcel(EXCEL_FILENAME);
     }
 
-    private static void createExcel(String filename, int count)
+    /**
+     * Calls all the necessary functions to create the excel file
+     * @param filename
+     * @param count
+     */
+    private static void createExcel(String filename)
     {
         File excelFile = new File(filename);
         
@@ -65,13 +79,13 @@ public class RandomDataGenerator
             WritableWorkbook workbook = Workbook.createWorkbook(excelFile);
             
             // Create Sheet
-            workbook.createSheet("Sheet1", 0);
+            workbook.createSheet(EXCEL_SHEETNAME, 0);
             
             // Add Headings to sheet
             addHeadings(workbook.getSheet(0), HEADINGS);
             
-            // TODO: Add Random Data
-//            addRandomData(workbook.getSheet(0));
+            // Add Random Data
+            addRandomData(workbook.getSheet(0));
             
             workbook.write();
             workbook.close();
@@ -95,6 +109,13 @@ public class RandomDataGenerator
         }
     }
     
+    /**
+     * Adds the first row to the excel file containing the headings
+     * @param sheet
+     * @param headings
+     * @throws RowsExceededException
+     * @throws WriteException
+     */
     private static void addHeadings(WritableSheet sheet, String[] headings) throws RowsExceededException, WriteException
     {
         // Excel Settings
@@ -136,21 +157,31 @@ public class RandomDataGenerator
                                ROW_VALUES[id][DEPTID]    + "\t" +
                                ROW_VALUES[id][WEIGHT]    + "\t" +
                                ROW_VALUES[id][PRODUCTYEAR] + "\t" + 
-                               ROW_VALUES[id][EXPIREYEAR] + "\n");
+                               ROW_VALUES[id][EXPIREYEAR] );
         }
-        //      String output = i + ";";                // ProductID : 0000-9999 (Unique Key)
-        //      output += (int)(Math.random()*11111) + ";"; // Price :     0-99,999
-        //      output += Math.abs(((int)(Math.random()*100)-50)) + ";"; // DeptID:     0-50 
-        //      output += (int)(Math.random()*10) + ";";    // Weight :    0-9
-        //      output += (int)(Math.random()*30)+1980 + ";"; // ProductYear:  1980-2010
-        //      output += (int)(Math.random()*35)+1980; // ExpireYear:   StartYear-2015 (or empty, 20% chance)
-        //      //System.out.println(output);
-        //      pw.println( output );
-        //  }
     }
 
-    private static void addData(WritableSheet sheet)
+    /**
+     * Calls the helper function createRandomData and then writes that data into the excel file
+     * @param sheet
+     * @throws RowsExceededException
+     * @throws WriteException
+     */
+    private static void addRandomData(WritableSheet sheet) throws RowsExceededException, WriteException
     {
+        // First we create random data
+        createRandomData();
         
+        // We will retrieve the data from the 2d global array and stick it into the excel spreadsheet
+        // We enter data starting at row 1 because the 1st row will be taken by the headings
+        for( int row = 1; row <= PRODUCT_COUNT ; row++)
+        {
+            sheet.addCell( new Number(PRODUCTID, row, ROW_VALUES[row][PRODUCTID]) );
+            sheet.addCell( new Number(PRICE, row, ROW_VALUES[row][PRICE]) );
+            sheet.addCell( new Number(DEPTID, row, ROW_VALUES[row][DEPTID]) );
+            sheet.addCell( new Number(WEIGHT, row, ROW_VALUES[row][WEIGHT]) );
+            sheet.addCell( new Number(PRODUCTYEAR, row, ROW_VALUES[row][PRODUCTYEAR]) );
+            sheet.addCell( new Number(EXPIREYEAR, row, ROW_VALUES[row][EXPIREYEAR]) );
+        }
     }
 }
