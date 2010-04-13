@@ -14,6 +14,7 @@ public class DBManager
     private String user;
     private String url;
     private final String DB_NAME = "Phase3";
+    private final String TABLE_NAME = "Student";
 
     public DBManager(String password, String inputFile)
     {
@@ -66,7 +67,7 @@ public class DBManager
 //        model.setResultSet(null);
         try
         {
-            model.setResultSet(stmt.executeQuery("SELECT * FROM Student"));
+            model.setResultSet(stmt.executeQuery("SELECT * FROM " + TABLE_NAME));
         } catch (SQLException e)
         {
             e.printStackTrace();
@@ -114,6 +115,6 @@ public class DBManager
      */
     private void clearTableData()
     {
-        execUpdate("Delete From Students");
+        execUpdate("Delete From " + TABLE_NAME);
     }
 }
