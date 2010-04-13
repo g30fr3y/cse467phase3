@@ -9,6 +9,7 @@ import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
@@ -118,14 +119,13 @@ public class RandomDataGenerator
      */
     private static void addHeadings(WritableSheet sheet, String[] headings) throws RowsExceededException, WriteException
     {
-        // Excel Settings
-        // TODO: Figure out how to make the headings bold
-//        WritableCellFormat Bold = new Writ;
+        // Font Settings
+        WritableFont bold = new WritableFont(WritableFont.ARIAL,10,WritableFont.BOLD);
         
         // Write the headings
         for( int i = 0; i < headings.length ; i++ )
         {
-            sheet.addCell(new Label(i, 0, headings[i]));
+            sheet.addCell( new Label(i, 0, headings[i], new WritableCellFormat(bold) ) );
         }
     }
     
