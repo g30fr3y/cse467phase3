@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
@@ -46,7 +45,6 @@ public class DBDataParser
             
             // Loop through all the contents reading them into a string buffer
             // We skip the first row because that should contain the headings
-            // Note: sheet.getCell(COL,ROW)
             for( int i = 1; i < sheet.getRows() ; i++ )
             {
                 for( int j = 0; j < sheet.getColumns() ; j++ )
