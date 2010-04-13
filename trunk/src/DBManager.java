@@ -72,6 +72,7 @@ public class DBManager {
 		}
 	}
 	
+
 	private void setupDatabase(String password) {
 		DatabaseCreator.createPhase3Database(password);
 	}
