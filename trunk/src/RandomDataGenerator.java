@@ -22,7 +22,7 @@ import jxl.write.biff.RowsExceededException;
 public class RandomDataGenerator
 {
     /* *****Begin: Global Variables***** */ 
-    static final String EXCEL_FILENAME = "test.xls";
+    static String EXCEL_FILENAME = "default.xls";
     static final String EXCEL_SHEETNAME = "Sheet1";
     static final String[] HEADINGS = {"Product ID","Price","DeptID","Weight","Product Year","Expire Year"};
     
@@ -56,7 +56,13 @@ public class RandomDataGenerator
     public static void main(String[] args)
     {
         // Get's the value from the command line, otherwise just defaults to 10
-        if (args.length == 1)
+        if (args.length == 2)
+        {
+            EXCEL_FILENAME = args[0] + ".xls";
+            PRODUCT_COUNT = Integer.parseInt(args[1]);
+            ROW_VALUES = new int[PRODUCT_COUNT + 1][NUM_HEADINGS];
+        }
+        else if ( args.length == 1)
         {
             PRODUCT_COUNT = Integer.parseInt(args[0]);
             ROW_VALUES = new int[PRODUCT_COUNT + 1][NUM_HEADINGS];
@@ -152,12 +158,12 @@ public class RandomDataGenerator
             ROW_VALUES[id][EXPIREYEAR]  = (int)( ROW_VALUES[id][PRODUCTYEAR] + Math.random()* (MAX_EXPIRE - ROW_VALUES[id][PRODUCTYEAR] ) + 0.5 );
             
             // TODO: Sanity check
-            System.out.println(ROW_VALUES[id][PRODUCTID] + "\t" +
-                               ROW_VALUES[id][PRICE]     + "\t" +
-                               ROW_VALUES[id][DEPTID]    + "\t" +
-                               ROW_VALUES[id][WEIGHT]    + "\t" +
-                               ROW_VALUES[id][PRODUCTYEAR] + "\t" + 
-                               ROW_VALUES[id][EXPIREYEAR] );
+//            System.out.println(ROW_VALUES[id][PRODUCTID] + "\t" +
+//                               ROW_VALUES[id][PRICE]     + "\t" +
+//                               ROW_VALUES[id][DEPTID]    + "\t" +
+//                               ROW_VALUES[id][WEIGHT]    + "\t" +
+//                               ROW_VALUES[id][PRODUCTYEAR] + "\t" + 
+//                               ROW_VALUES[id][EXPIREYEAR] );
         }
     }
 
