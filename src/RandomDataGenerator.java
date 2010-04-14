@@ -146,7 +146,7 @@ public class RandomDataGenerator
      * <pre>    int random = (int) (Lower_Bound + Math.random() * ( Upper_Bound - Lower_bound) + 0.5) ;</pre>
      * @param sheet
      */
-    public static void createRandomData()
+    private static void createRandomData()
     {   
         // Select a random starting point rather than randomly selecting Product ID's
         int startingID = (int)( Math.random()* MAX_PRODUCT_ID + 0.5);
@@ -161,7 +161,7 @@ public class RandomDataGenerator
             ROW_VALUES[id][WEIGHT]    = (int)( Math.random()* MAX_WEIGHT + 0.5 );
             ROW_VALUES[id][PRODUCTYEAR] = (int)( START_YEAR + Math.random()* (MAX_START_YEAR - START_YEAR ) + 0.5 );
             // 20% Chance of the Expire Year being empty
-            if( Math.random() > .2)
+            if( (int)(Math.random()*100.0) > 20)
                 ROW_VALUES[id][EXPIREYEAR]  = (int)( ROW_VALUES[id][PRODUCTYEAR] + Math.random()* (MAX_EXPIRE - ROW_VALUES[id][PRODUCTYEAR] ) + 0.5 );
         }
     }
