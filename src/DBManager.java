@@ -19,7 +19,6 @@ public class DBManager
     {
         this.inputFile = inputFile;
         this.model = new ResultsModel();
-        this.model.setResultSet(null);
         this.user = "root";
         this.url = "jdbc:mysql://localhost/" + DB_NAME;
         
