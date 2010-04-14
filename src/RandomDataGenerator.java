@@ -25,6 +25,7 @@ public class RandomDataGenerator
     static String EXCEL_FILENAME = "default.xls";
     static final String EXCEL_SHEETNAME = "Sheet1";
     static final String[] HEADINGS = {"Product ID","Price","DeptID","Weight","Product Year","Expire Year"};
+    static final double PERCENT_OF_EMPTY = .2;
     
     // Index names
     static final int PRODUCTID   = 0, 
@@ -154,16 +155,9 @@ public class RandomDataGenerator
             ROW_VALUES[id][DEPTID]    = (int)( Math.random()* MAX_DEPT_ID + 0.5 );
             ROW_VALUES[id][WEIGHT]    = (int)( Math.random()* MAX_WEIGHT + 0.5 );
             ROW_VALUES[id][PRODUCTYEAR] = (int)( START_YEAR + Math.random()* (MAX_START_YEAR - START_YEAR ) + 0.5 );
-            //TODO: Add the logic for the 20% chance not having an expiration date
-            ROW_VALUES[id][EXPIREYEAR]  = (int)( ROW_VALUES[id][PRODUCTYEAR] + Math.random()* (MAX_EXPIRE - ROW_VALUES[id][PRODUCTYEAR] ) + 0.5 );
-            
-            // TODO: Sanity check
-//            System.out.println(ROW_VALUES[id][PRODUCTID] + "\t" +
-//                               ROW_VALUES[id][PRICE]     + "\t" +
-//                               ROW_VALUES[id][DEPTID]    + "\t" +
-//                               ROW_VALUES[id][WEIGHT]    + "\t" +
-//                               ROW_VALUES[id][PRODUCTYEAR] + "\t" + 
-//                               ROW_VALUES[id][EXPIREYEAR] );
+            // 20% Chance of the Expire Year being empty
+            if( Math.random() > .2)
+                ROW_VALUES[id][EXPIREYEAR]  = (int)( ROW_VALUES[id][PRODUCTYEAR] + Math.random()* (MAX_EXPIRE - ROW_VALUES[id][PRODUCTYEAR] ) + 0.5 );
         }
     }
 
@@ -188,6 +182,22 @@ public class RandomDataGenerator
             sheet.addCell( new Number(WEIGHT, row, ROW_VALUES[row][WEIGHT]) );
             sheet.addCell( new Number(PRODUCTYEAR, row, ROW_VALUES[row][PRODUCTYEAR]) );
             sheet.addCell( new Number(EXPIREYEAR, row, ROW_VALUES[row][EXPIREYEAR]) );
+        }
+    }
+    
+    /**
+     * Sanity Check, just prints the data entered in the 2d array
+     */
+    public static void printData()
+    {
+        for (int id = 1 ; id <= PRODUCT_COUNT ; id++) 
+        {
+            System.out.println(ROW_VALUES[id][PRODUCTID] + "\t" +
+                               ROW_VALUES[id][PRICE]     + "\t" +
+                               ROW_VALUES[id][DEPTID]    + "\t" +
+                               ROW_VALUES[id][WEIGHT]    + "\t" +
+                               ROW_VALUES[id][PRODUCTYEAR] + "\t" + 
+                               ROW_VALUES[id][EXPIREYEAR] );
         }
     }
 }
