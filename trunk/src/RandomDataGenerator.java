@@ -37,7 +37,8 @@ public class RandomDataGenerator
     
     // Random Variable Bounds
     static int PRODUCT_COUNT  = 10;       // Alter this variable to  
-    static final int MAX_PRICE      = 99999,
+    static final int MAX_PRODUCT_ID = 9999,
+                     MAX_PRICE      = 99999,
                      MAX_DEPT_ID    = 50,
                      MAX_WEIGHT     = 9,
                      START_YEAR     = 1980,
@@ -46,7 +47,7 @@ public class RandomDataGenerator
     static final int NUM_HEADINGS = HEADINGS.length;
     
     // Create a 2d array to hold all the data
-    static int[][] ROW_VALUES = new int[PRODUCT_COUNT + 1][NUM_HEADINGS];
+    static int[][] ROW_VALUES = new int[PRODUCT_COUNT][NUM_HEADINGS];
     
     
     /* *****End: Global Variables***** */
@@ -147,10 +148,10 @@ public class RandomDataGenerator
      */
     public static void createRandomData()
     {
-        for (int id = 1 ; id <= PRODUCT_COUNT ; id++) 
+        for (int id = 0 ; id < PRODUCT_COUNT ; id++) 
         {
             // Set up the entries for this row
-            ROW_VALUES[id][PRODUCTID] = id;
+            ROW_VALUES[id][PRODUCTID] = (int)( Math.random()* MAX_PRODUCT_ID + 0.5);
             ROW_VALUES[id][PRICE]     = (int)( Math.random()* MAX_PRICE + 0.5 );
             ROW_VALUES[id][DEPTID]    = (int)( Math.random()* MAX_DEPT_ID + 0.5 );
             ROW_VALUES[id][WEIGHT]    = (int)( Math.random()* MAX_WEIGHT + 0.5 );
@@ -174,14 +175,14 @@ public class RandomDataGenerator
         
         // We will retrieve the data from the 2d global array and stick it into the excel spreadsheet
         // We enter data starting at row 1 because the 1st row will be taken by the headings
-        for( int row = 1; row <= PRODUCT_COUNT ; row++)
+        for( int row = 0; row < PRODUCT_COUNT ; row++)
         {
-            sheet.addCell( new Number(PRODUCTID, row, ROW_VALUES[row][PRODUCTID]) );
-            sheet.addCell( new Number(PRICE, row, ROW_VALUES[row][PRICE]) );
-            sheet.addCell( new Number(DEPTID, row, ROW_VALUES[row][DEPTID]) );
-            sheet.addCell( new Number(WEIGHT, row, ROW_VALUES[row][WEIGHT]) );
-            sheet.addCell( new Number(PRODUCTYEAR, row, ROW_VALUES[row][PRODUCTYEAR]) );
-            sheet.addCell( new Number(EXPIREYEAR, row, ROW_VALUES[row][EXPIREYEAR]) );
+            sheet.addCell( new Number(PRODUCTID, row + 1, ROW_VALUES[row][PRODUCTID]) );
+            sheet.addCell( new Number(PRICE, row + 1, ROW_VALUES[row][PRICE]) );
+            sheet.addCell( new Number(DEPTID, row + 1, ROW_VALUES[row][DEPTID]) );
+            sheet.addCell( new Number(WEIGHT, row + 1, ROW_VALUES[row][WEIGHT]) );
+            sheet.addCell( new Number(PRODUCTYEAR, row + 1, ROW_VALUES[row][PRODUCTYEAR]) );
+            sheet.addCell( new Number(EXPIREYEAR, row + 1, ROW_VALUES[row][EXPIREYEAR]) );
         }
     }
     
