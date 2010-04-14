@@ -10,7 +10,6 @@ public class DBManager
     private Statement stmt;
     private ResultsModel model;
     private String inputFile;
-    private String password;
     private String user;
     private String url;
     private final String DB_NAME = "Phase3";
@@ -64,7 +63,7 @@ public class DBManager
 
     public String[] getAllTableData()
     {
-//        model.setResultSet(null);
+        model.setResultSet(null);
         try
         {
             model.setResultSet(stmt.executeQuery("SELECT * FROM " + TABLE_NAME));
@@ -77,7 +76,7 @@ public class DBManager
 
     public String[] runQuery(String sqlQuery)
     {
-//        model.setResultSet(null);
+        model.setResultSet(null);
         try
         {
             model.setResultSet(stmt.executeQuery(sqlQuery));
@@ -90,7 +89,7 @@ public class DBManager
 
     public void execUpdate(String sqlUpdate)
     {
-//        model.setResultSet(null);
+        model.setResultSet(null);
         try
         {
             stmt.executeUpdate(sqlUpdate);
