@@ -147,11 +147,15 @@ public class RandomDataGenerator
      * @param sheet
      */
     public static void createRandomData()
-    {
+    {   
+        // Select a random starting point rather than randomly selecting Product ID's
+        int startingID = (int)( Math.random()* MAX_PRODUCT_ID + 0.5);
+        startingID += ( startingID + PRODUCT_COUNT > MAX_PRODUCT_ID ) ? (startingID + PRODUCT_COUNT) - MAX_PRODUCT_ID : 0 ;
+        
         for (int id = 0 ; id < PRODUCT_COUNT ; id++) 
         {
             // Set up the entries for this row
-            ROW_VALUES[id][PRODUCTID] = (int)( Math.random()* MAX_PRODUCT_ID + 0.5);
+            ROW_VALUES[id][PRODUCTID] = startingID + id;
             ROW_VALUES[id][PRICE]     = (int)( Math.random()* MAX_PRICE + 0.5 );
             ROW_VALUES[id][DEPTID]    = (int)( Math.random()* MAX_DEPT_ID + 0.5 );
             ROW_VALUES[id][WEIGHT]    = (int)( Math.random()* MAX_WEIGHT + 0.5 );
