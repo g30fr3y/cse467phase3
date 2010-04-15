@@ -9,6 +9,7 @@ public class QuasiIdentifiers {
 	 * quasi-ids currently selected.
 	 */
 	public QuasiIdentifiers() {
+		quasiIdList = new int[TOTAL_QUASI_IDS_OPTIONS];
 		for (int i = 0; i < TOTAL_QUASI_IDS_OPTIONS; i++) {
 			this.quasiIdList[i] = -1;
 		}
