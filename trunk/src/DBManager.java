@@ -27,6 +27,13 @@ public class DBManager
         
         this.populateDatabase();
     }
+    
+    public DBManager () {
+        this.model = new ResultsModel();
+        this.user = "root";
+        this.url = "jdbc:mysql://localhost/" + DB_NAME;
+        this.openConnection("");  	
+    }
 
     private void openConnection(String password)
     {
