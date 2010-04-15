@@ -16,18 +16,37 @@ public class GeneralizationSteps extends QuasiIdentifiers {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		String output = "[ ";
+		String output = "[";
 		for (int i = 0; i < TOTAL_QUASI_IDS_OPTIONS; i++) {
 			if (this.getQuasiIdValue(i) > -1) {
-				output += this.getQuasiIdValue(i) + " ";				
+				String cell = String.format("%2s", getQuasiIdValue(i));
+				output += cell;				
 			}
 		}
-		output += "]";
+		output += " ]";
 		return output;
 	}
 	
+	/**
+	 * This method is useful to test if one set of generalization
+	 * steps dominates another.  Dominates is defined as each index
+	 * of the possibleSolution is less than or equal to each index
+	 * of the calling object's quasi-id list.  
+	 * 
+	 * @param possibleSolution	int array of quasi-id steps to test
+	 * 							against.
+	 * @return					True if all indices of 
+	 * 							possibleSolution is less than or 
+	 * 							equal to the quasi-id list.
+	 */
 	public boolean dominates(int[] possibleSolution) {
-		// TODO: finish method
-		return false;
+		int[] list = getQuasiIdList();
+		
+		for (int i = 0; i < TOTAL_QUASI_IDS_OPTIONS; i++) {
+			if (list[i] < possibleSolution[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
