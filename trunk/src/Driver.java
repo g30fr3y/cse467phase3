@@ -30,12 +30,14 @@ public class Driver {
 //			e.printStackTrace();
 //		}
 		
-		DBManager dbManager = new DBManager("", "st.xls");
-		String[] info = dbManager.getAllTableData();
-		for (String s : info) {
-			System.out.println(s);
-		}
-		dbManager.closeConnection();
+//		DBManager dbManager = new DBManager("", "test.xls");
+//		String[] info = dbManager.getAllTableData();
+//		for (String s : info) {
+//			System.out.println(s);
+//		}
+//		dbManager.closeConnection(true);
+		QuasiIdentifiers quasi = new QuasiIdentifiers(QuasiIdentifiers.createQuasiIdMask());
+		System.out.println(quasi);
 	}
 
 }
