@@ -108,6 +108,8 @@ public class QuasiIdentifiers {
 				System.out.println(i + ") " + QUASI_ID_TAGS[i]);
 			}
 			
+			
+			// TODO: Get rid of those magic numbers
 			try {
 				int selection = input.nextInt();
 				if (selection == 6) {
