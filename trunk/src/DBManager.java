@@ -14,6 +14,7 @@ public class DBManager
     private String url;
     private final String DB_NAME = "Phase3";
     private final String TABLE_NAME = "Student";
+    private final String DEFAULT_PASSWORD = "";
 
     public DBManager(String password, String inputFile)
     {
@@ -32,7 +33,7 @@ public class DBManager
         this.model = new ResultsModel();
         this.user = "root";
         this.url = "jdbc:mysql://localhost/" + DB_NAME;
-        this.openConnection("");  	
+        this.openConnection(DEFAULT_PASSWORD);  	
     }
 
     private void openConnection(String password)
@@ -57,7 +58,7 @@ public class DBManager
     {
         try
         {
-            // TODO: add code to clear out the database tables
+            // Clears database if the connection is closed with a true parameter
             if(eraseData)
                 clearTableData();
             conn.close();
