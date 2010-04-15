@@ -1,7 +1,16 @@
+import java.util.Vector;
+
 
 public class QuasiIdSelector {
 	
-	public QuasiIdSelector() {
+	private QuasiIdSelector(QuasiId ... list) {
+		this();
+		for (QuasiId ids : list) {
+			this.enableQuasiId(ids);
+		}
+	}
+	
+	private QuasiIdSelector() {
 		productId = false;
 		price = false;
 		weight = false;
@@ -10,22 +19,8 @@ public class QuasiIdSelector {
 		expireYear = false;
 	}
 	
-	public QuasiIdSelector(QuasiIdSelector selector) {
-		boolean[] values = selector.getSelected();
-		
-		int marker = 0;
-		for (QuasiId id : QuasiId.values()) {
-			this.setQuasiId(id, values[marker]);
-			marker++;
-		}
-	}
-	
-	public void enableQuasiId(QuasiId id) {
-		this.setQuasiId(id, true);
-	}
-	
-	public void disAbleQuasiId(QuasiId id) {
-		this.setQuasiId(id, false);
+	public static QuasiIdSelector getQuasiIdSelector(QuasiId ... list) {
+		return new QuasiIdSelector(list);
 	}
 	
 	public boolean isEnabled(QuasiId id) {
@@ -47,6 +42,51 @@ public class QuasiIdSelector {
 		}	
 	}
 	
+	public boolean equals(QuasiIdSelector other) {
+		if ( (other != null) && (other instanceof QuasiIdSelector) ) {
+			QuasiId[] ids1 = this.getEnabledIds();
+			QuasiId[] ids2 = other.getEnabledIds();
+			for (int i = 0; i < ids1.length; i++) {
+				if ( ids1[i] != ids2[i] ) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public String toString() {
+		String output = "";
+		QuasiId[] selected = this.getEnabledIds();
+		for (QuasiId id : selected) {
+			output += id + " ";
+		}
+		return "[ " + output + "]";
+	}
+	
+	public QuasiId[] getEnabledIds() {
+		Vector<QuasiId> enabled = new Vector<QuasiId>();
+		for (QuasiId id : QuasiId.values()) {
+			if (this.isEnabled(id)) {
+				enabled.add(id);				
+			}
+		}
+		
+		QuasiId[] output = new QuasiId[enabled.size()];
+		
+		for (int i = 0; i < enabled.size(); i++) {
+			output[i] = enabled.get(i);
+		}
+		
+		return output;
+	}
+
+	private void enableQuasiId(QuasiId id) {
+		this.setQuasiId(id, true);
+	}
+
 	private void setQuasiId(QuasiId id, boolean set) {
 		switch (id) {
 		case DEPT_ID:
@@ -69,56 +109,7 @@ public class QuasiIdSelector {
 			break;
 		}		
 	}
-	
-	private boolean[] getSelected() {
-		boolean[] selected = new boolean[QuasiId.values().length];
-		int marker = 0;
-		for (QuasiId id : QuasiId.values()) {
-			selected[marker] = isEnabled(id);
-			marker++;
-		}
-		return selected;		
-	}
-	
-	public boolean equals(QuasiIdSelector other) {
-		if ( !(other instanceof QuasiIdSelector) ) {
-			return false;
-		} else {
-			boolean[] values1 = this.getSelected();
-			boolean[] values2 = other.getSelected();
-			for (int i = 0; i < QuasiId.values().length; i++) {
-				if ( !(values1[i] && values2[i]) ) {
-					return false;
-				}
-			}
-			return true;
-		}
-	}
-	
-	public String toString() {
-		String output = "[ ";
-		if (productId) {
-			output += QuasiId.PRODUCT_ID + " ";
-		}
-		if (deptId) {
-			output += QuasiId.DEPT_ID + " ";
-		}
-		if (price) {
-			output += QuasiId.PRICE + " ";
-		}
-		if (weight) {
-			output += QuasiId.WEIGHT + " ";
-		}
-		if (productYear) {
-			output += QuasiId.PRODUCT_YEAR + " ";
-		}
-		if (expireYear) {
-			output += QuasiId.EXPIRE_YEAR + " ";
-		}
-		output += "]";
-		return output;
-	}
-	
+
 	private boolean productId;
 	private boolean price;
 	private boolean weight;
