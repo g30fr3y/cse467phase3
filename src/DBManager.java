@@ -25,7 +25,6 @@ public class DBManager
         
         this.setupDatabase(password);
         this.openConnection(password);
-        
         this.populateDatabase();
     }
     

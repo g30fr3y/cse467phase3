@@ -144,7 +144,6 @@ public class RandomDataGenerator
      * <pre>    int random = (int) (Lower_Bound + Math.random() * ( Upper_Bound - Lower_bound) );</pre>
      * LowerBound <= random <=UpperBound<br>
      * <pre>    int random = (int) (Lower_Bound + Math.random() * ( Upper_Bound - Lower_bound) + 0.5) ;</pre>
-     * @param sheet
      */
     private static void createRandomData()
     {   
@@ -161,16 +160,13 @@ public class RandomDataGenerator
             ROW_VALUES[id][WEIGHT]    = (int)( Math.random()* MAX_WEIGHT + 0.5 );
             ROW_VALUES[id][PRODUCTYEAR] = (int)( START_YEAR + Math.random()* (MAX_START_YEAR - START_YEAR ) + 0.5 );
             // 20% Chance of the Expire Year being empty
-            if( (int)(Math.random()*100.0) > 20)
+            if( Math.random() > .2)
                 ROW_VALUES[id][EXPIREYEAR]  = (int)( ROW_VALUES[id][PRODUCTYEAR] + Math.random()* (MAX_EXPIRE - ROW_VALUES[id][PRODUCTYEAR] ) + 0.5 );
         }
     }
 
     /**
      * Calls the helper function createRandomData and then writes that data into the excel file
-     * @param sheet
-     * @throws RowsExceededException
-     * @throws WriteException
      */
     private static void addRandomData(WritableSheet sheet) throws RowsExceededException, WriteException
     {
@@ -195,7 +191,7 @@ public class RandomDataGenerator
      */
     public static void printData()
     {
-        for (int id = 1 ; id <= PRODUCT_COUNT ; id++) 
+        for (int id = 0 ; id <= PRODUCT_COUNT ; id++) 
         {
             System.out.println(ROW_VALUES[id][PRODUCTID] + "\t" +
                                ROW_VALUES[id][PRICE]     + "\t" +
