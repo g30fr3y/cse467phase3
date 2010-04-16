@@ -14,24 +14,37 @@ public class Driver {
 //		}
 //		dbManager.closeConnection(true);
 		
-//		QuasiIdentifiers quasi = new QuasiIdentifiers(QuasiIdentifiers.createQuasiIdMask());
-//		System.out.println(quasi);
-		
-//		int[] mask = { 1, -1, 2, 1, -1, 2 };
-//		int[] list1 = {1, -1, 2, 1, -1, 2};	// should be equal; dom == true
-//		int[] list2 = {0, -1, 1, 0, -1, 1}; // dom == true
-//		int[] list3 = {2, -1, 3, 2, -1, 3}; // dom == false
-//		int[] list4 = {2,  1, 3, 2,  1, 3}; // dom == false; mismatched quasi-ids???
-//		int[] list5 = {-1, -1, -1, -1, -1, -1}; // dom == false; no quasi-ids???
-//		GeneralizationSteps test = new GeneralizationSteps(mask);
+//		GeneralizationSteps test = new GeneralizationSteps();
+//		test.setGenSteps(QuasiId.DEPT_ID, 10);
+//		test.setGenSteps(QuasiId.PRODUCT_ID, 4);
+//		test.setGenSteps(QuasiId.PRICE, 3);
+//		test.setGenSteps(QuasiId.EXPIRE_YEAR, 2);
+//		
+//		GeneralizationSteps test0 = new GeneralizationSteps();
+//		test0.setGenSteps(QuasiId.DEPT_ID, 10);
+//		test0.setGenSteps(QuasiId.PRODUCT_ID, 4);
+//		test0.setGenSteps(QuasiId.PRICE, 3);
+//		test0.setGenSteps(QuasiId.EXPIRE_YEAR, 2);
+//		
+//		GeneralizationSteps test1 = new GeneralizationSteps();
+//		test1.setGenSteps(QuasiId.DEPT_ID, 9);
+//		test1.setGenSteps(QuasiId.PRODUCT_ID, 4);
+//		test1.setGenSteps(QuasiId.PRICE, 3);
+//		test1.setGenSteps(QuasiId.EXPIRE_YEAR, 2);
+//		
+//		GeneralizationSteps test2 = new GeneralizationSteps();
+//		test2.setGenSteps(QuasiId.DEPT_ID, 11);
+//		
 //		System.out.println(test);
-//		System.out.println("Testing list1 : " + test.dominates(list1) + " ; TRUE");
-//		System.out.println("Testing list2 : " + test.dominates(list2) + " ; TRUE");
-//		System.out.println("Testing list3 : " + test.dominates(list3) + " ; FALSE");
-//		System.out.println("Testing list4 : " + test.dominates(list4) + " ; FALSE");
-//		System.out.println("Testing list5 : " + test.dominates(list5) + " ; TRUE");
+//		System.out.println(test.viewStepsOnly());
+//
+//		System.out.println(test.dominates(test0.getDataPairs())); // true
+//		System.out.println(test.dominates(test1.getDataPairs())); // true
+//		System.out.println(test.dominates(test2.getDataPairs())); // false
 		
-		System.out.println(Identifier.Ids.PRODUCT_ID.getPosition());
+		GeneralizationTable table = new GeneralizationTable(null, QuasiId.DEPT_ID, QuasiId.PRODUCT_ID);
+		System.out.println(table);
+		
 	}
 
 }
