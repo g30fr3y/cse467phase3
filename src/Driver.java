@@ -12,7 +12,7 @@ public class Driver {
 //		for (String s : info) {
 //			System.out.println(s);
 //		}
-//		dbManager.closeConnection(true);
+//		dbManager.closeConnection(false);
 		
 //		GeneralizationSteps test = new GeneralizationSteps();
 //		test.setGenSteps(QuasiId.DEPT_ID, 10);
@@ -42,8 +42,8 @@ public class Driver {
 //		System.out.println(test.dominates(test1.getDataPairs())); // true
 //		System.out.println(test.dominates(test2.getDataPairs())); // false
 		
-		GeneralizationTable table = new GeneralizationTable(null, QuasiId.DEPT_ID, QuasiId.PRODUCT_ID);
-		System.out.println(table);
+		GeneralizationTable table = new GeneralizationTable(QuasiId.DEPT_ID, QuasiId.WEIGHT);
+//		System.out.println(table);
 		
 	}
 
