@@ -3,13 +3,10 @@ import java.util.ArrayList;
 
 public class GeneralizationTable {
 	
-	private String[] clusterList;
-	private QuasiIdentifiers quasiIdList;
-	private ArrayList<GeneralizationCell> genTable;
-	private DBManager dbManager;
-	
-	public GeneralizationTable(int[] quasiIdList, DBManager dbManager) {
-		this.quasiIdList = new QuasiIdentifiers(quasiIdList);
+	public GeneralizationTable(DBManager dbManager, QuasiId ... list) {
+//		this.dbManager = dbManager;
+		this.genTable = new ArrayList<GeneralizationCell>();
+		this.selectIds = list;
 		this.setClusterList();
 		this.fillGenTable();
 	}
@@ -24,7 +21,7 @@ public class GeneralizationTable {
 		String currentRow = genTable.get(0).getSingleTuple();
 		for (GeneralizationCell gc : genTable) {
 			if (gc.getSingleTuple().equals(currentRow)) {
-				if (solution.dominates(gc.getGeneralizationSteps())) {
+				if (solution.dominates(gc.getGeneralizationSteps().getDataPairs())) {
 					lineKanonymity++;
 				}
 			} else {
@@ -41,7 +38,7 @@ public class GeneralizationTable {
 				// reset and start the next row
 				currentRow = gc.getSingleTuple();
 				lineKanonymity = 0;
-				if (solution.dominates(gc.getGeneralizationSteps())) {
+				if (solution.dominates(gc.getGeneralizationSteps().getDataPairs())) {
 					lineKanonymity++;
 				}
 				
@@ -50,6 +47,34 @@ public class GeneralizationTable {
 		return true;
 	}
 	
+	// more formatting can happen here...
+	public String toString() {
+		String output = "";
+		output += "\t";
+		
+		// getting the header info...
+		for (String s : this.clusterList) {
+			output += s + "\t";
+		}
+		
+		output += "\n";
+		
+		// getting the cells...
+		String currentRow = genTable.get(0).getSingleTuple();
+		output += currentRow + "  ";
+		for (GeneralizationCell gc : genTable) {
+			if (gc.getSingleTuple().equals(currentRow)) {
+				output += gc.toString() + "  ";
+			} else {
+				currentRow = gc.getSingleTuple();
+				output += "\n" + currentRow + "  ";
+				output += gc.toString() + "  ";
+			}
+		}
+		
+		return output;
+	}
+
 	private void fillGenTable() {
 		for (String s : clusterList) {
 			if ( !(s.contains(",")) ) {		// we only want single tuples here...
@@ -60,66 +85,57 @@ public class GeneralizationTable {
 	
 	private void fillGenRow(String singleTuple) {
 		for (String s : clusterList) {
-			genTable.add(new GeneralizationCell(singleTuple, s));
+			genTable.add(new GeneralizationCell(singleTuple, s, selectIds));
 		}
 	}
 
 	private void setClusterList() {
 		// TODO: finish method
+		this.clusterList = new String[6];
+		for (int i = 0; i < 6; i++) {
+			clusterList[i] = "t" + i;
+		}
 	}
 	
-	// more formatting can happen here...
-	public String toString() {
-		String output = "";
-		output += "   ";
-		
-		// getting the header info...
-		for (String s : this.clusterList) {
-			output += s + "\t";
-		}
-		
-		// getting the cells...
-		String currentRow = genTable.get(0).getSingleTuple();
-		output += currentRow + "\t";
-		for (GeneralizationCell gc : genTable) {
-			if (gc.getSingleTuple().equals(currentRow)) {
-				output += gc.toString() + "\t";
-			} else {
-				currentRow = gc.getSingleTuple();
-				output += currentRow + "\t";
-			}
-		}
-		
-		return output;
-	}
+	private String[] clusterList;
+	private QuasiId[] selectIds;
+	private ArrayList<GeneralizationCell> genTable;
+	private DBManager dbManager;
 
-	class GeneralizationCell {
+	private class GeneralizationCell {
 		private String singleTuple;
 		private String targetCluster;
 		private GeneralizationSteps genSteps;
 		
 		public GeneralizationCell(String singleTuple, 
-								  String targetCluster) {
+								  String targetCluster,
+								  QuasiId[] list) {
 			this.singleTuple = singleTuple;
 			this.targetCluster = targetCluster;
-			this.setGeneralizationSteps();
+			this.setGeneralizationSteps(list);
 		}
 		
 		public String getSingleTuple() {
 			return singleTuple;
 		}
 		
-		private void setGeneralizationSteps() {
+		private void setGeneralizationSteps(QuasiId[] list) {
 			// TODO: finish method
 			// 		 this method will take a little time to figure out
+			genSteps = new GeneralizationSteps();
+			for (QuasiId id : list) {
+				// determine generalization needed for each id in list
+				int numSteps = 2;
+				genSteps.setGenSteps(id, numSteps);
+			}
 		}
 		
-		public int[] getGeneralizationSteps() {
-			return genSteps.getQuasiIdList();
+		public GeneralizationSteps getGeneralizationSteps() {
+			return genSteps;
 		}
 		
 		public String toString() {
-			return genSteps.toString();
+			return genSteps.viewStepsOnly();
 		}
 	}
 }
