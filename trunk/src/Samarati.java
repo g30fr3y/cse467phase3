@@ -10,7 +10,7 @@
 public class Samarati {	
 
 	public Samarati(QuasiId ... list) {
-		quasiIdList = QuasiIdSelector.getQuasiIdSelector(list);
+		quasiIdList = list;
 		setLatticeHeight(list);
 	}
 	
@@ -56,5 +56,5 @@ public class Samarati {
 	}
 	
 	private int latticeHeight;
-	private QuasiIdSelector quasiIdList;
+	private QuasiId[] quasiIdList;
 }
