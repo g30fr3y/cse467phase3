@@ -17,7 +17,6 @@ public class Samarati {
 	// TODO: A lot more work is needed here, work in progress...
 	// 		 This is the method required in the instructions...
 	public static String kanon(int kAnon, int maxSup, QuasiId ... list) {
-		DBManager dbManager = new DBManager();
 		// get the start time...
 		
 		// Create a Samarati object and initialize the quasi-id(s)
@@ -26,7 +25,7 @@ public class Samarati {
 		// Create a generalization table with the
 		// k-anonymity and maximum suppression values.
 	    GeneralizationTable genTable;
-	    genTable = new GeneralizationTable(dbManager, list);
+	    genTable = new GeneralizationTable(list);
 	    
 		// Perform the actual binary search portion of the algorithm.
 	    // The GeneralizationTable method testSolution() will be useful here
@@ -35,7 +34,6 @@ public class Samarati {
 		
 		// Return a string representation of the generalized data
 		// with the execution time.
-	    dbManager.closeConnection(true);
 		return "It doesn't work yet";		
 	}
 
