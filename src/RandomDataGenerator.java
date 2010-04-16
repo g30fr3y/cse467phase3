@@ -5,9 +5,15 @@
 import java.io.File;
 import java.io.IOException;
 
+import jxl.Cell;
+import jxl.CellFormat;
 import jxl.Workbook;
+import jxl.biff.DisplayFormat;
+import jxl.format.Alignment;
 import jxl.write.Label;
 import jxl.write.Number;
+import jxl.write.NumberFormat;
+import jxl.write.WritableCell;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
@@ -48,6 +54,21 @@ public class RandomDataGenerator
     
     // Create a 2d array to hold all the data
     static int[][] ROW_VALUES = new int[PRODUCT_COUNT][NUM_HEADINGS];
+    
+    // Formatting for the Product ID, it needs to have 4 characters zero filled
+    static final String NUMBER_FORMAT = "0000";
+    
+    // For aesthetics only, column widths
+    static final int WIDTH_BUFFER = 3;
+    static final int[] COLUMN_WIDTHS = {
+                                            HEADINGS[0].length(),
+                                            5,
+                                            HEADINGS[2].length(),
+                                            HEADINGS[3].length(),
+                                            HEADINGS[4].length(),
+                                            HEADINGS[5].length()
+                                       };
+    
     
     
     /* *****End: Global Variables***** */
@@ -127,13 +148,30 @@ public class RandomDataGenerator
      */
     private static void addHeadings(WritableSheet sheet, String[] headings) throws RowsExceededException, WriteException
     {
+        // Set Column Widths
+        setColumnsWidth(sheet);
+        
         // Font Settings
-        WritableFont bold = new WritableFont(WritableFont.ARIAL,10,WritableFont.BOLD);
+//        WritableFont bold = new WritableFont(WritableFont.ARIAL,10,WritableFont.BOLD);
+        WritableCellFormat bold_center = new WritableCellFormat(new WritableFont(WritableFont.ARIAL,10,WritableFont.BOLD) );
+        bold_center.setAlignment(Alignment.CENTRE);
         
         // Write the headings
         for( int i = 0; i < headings.length ; i++ )
         {
-            sheet.addCell( new Label(i, 0, headings[i], new WritableCellFormat(bold) ) );
+            // Set the column width as we go
+            sheet.addCell( new Label(i, 0, headings[i], bold_center ) );
+        }
+    }
+    
+    /**
+     * Simply for aesthetics, this will set the column widths so that everything can be seen 
+     */
+    private static void setColumnsWidth(WritableSheet sheet)
+    {
+        for(int columnName = 0; columnName < NUM_HEADINGS; columnName++)
+        {
+            sheet.setColumnView(columnName, COLUMN_WIDTHS[columnName] + WIDTH_BUFFER);
         }
     }
     
@@ -173,11 +211,14 @@ public class RandomDataGenerator
         // First we create random data
         createRandomData();
         
+        // Create formatting needed for the ID
+        WritableCellFormat productIDFormat = new WritableCellFormat(new NumberFormat(NUMBER_FORMAT) );
+        
         // We will retrieve the data from the 2d global array and stick it into the excel spreadsheet
         // We enter data starting at row 1 because the 1st row will be taken by the headings
         for( int row = 0; row < PRODUCT_COUNT ; row++)
         {
-            sheet.addCell( new Number(PRODUCTID, row + 1, ROW_VALUES[row][PRODUCTID]) );
+            sheet.addCell( new Number(PRODUCTID, row + 1, ROW_VALUES[row][PRODUCTID],productIDFormat));
             sheet.addCell( new Number(PRICE, row + 1, ROW_VALUES[row][PRICE]) );
             sheet.addCell( new Number(DEPTID, row + 1, ROW_VALUES[row][DEPTID]) );
             sheet.addCell( new Number(WEIGHT, row + 1, ROW_VALUES[row][WEIGHT]) );
