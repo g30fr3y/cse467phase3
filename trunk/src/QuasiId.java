@@ -1,10 +1,10 @@
 
 public enum QuasiId {
 	// TODO: need to set these max gens to the correct value
-	PRODUCT_ID(2, "`productID`"),
-	PRICE(2,"`price`"),
-	DEPT_ID(2, "`deptID`"),
-	WEIGHT(2, "`weight`"),
+	PRODUCT_ID(4, "`productID`"),
+	PRICE(5,"`price`"),
+	DEPT_ID(5, "`deptID`"),
+	WEIGHT(4, "`weight`"),
 	PRODUCT_YEAR(2, "`productYear`"),
 	EXPIRE_YEAR(2, "`expireYear`");
 	
