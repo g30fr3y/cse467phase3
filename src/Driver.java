@@ -42,8 +42,13 @@ public class Driver {
 //		System.out.println(test.dominates(test1.getDataPairs())); // true
 //		System.out.println(test.dominates(test2.getDataPairs())); // false
 		
-		GeneralizationTable table = new GeneralizationTable(QuasiId.DEPT_ID, QuasiId.WEIGHT);
-		System.out.println(table);
+//		GeneralizationTable table = new GeneralizationTable(QuasiId.DEPT_ID);//, QuasiId.WEIGHT);
+//		System.out.println(table);
+		GeneralizationSteps solution = new GeneralizationSteps();
+		solution.setGenSteps(QuasiId.DEPT_ID, 5);
+		solution.setGenSteps(QuasiId.PRODUCT_ID, 5);
+		solution.setGenSteps(QuasiId.WEIGHT, 5);
+		System.out.println(Generalizer.getGeneralizedData(solution));
 		
 	}
 

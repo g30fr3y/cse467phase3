@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 public class GeneralizationSteps {
 	
 	public GeneralizationSteps() {
@@ -43,17 +45,17 @@ public class GeneralizationSteps {
 	public int getGenStepValue(QuasiId id) {
 		switch (id) {
 			case DEPT_ID:
-				return dataPairs[QuasiId.DEPT_ID.getPosition()].getNumSteps();
+				return dataPairs[id.getPosition()].getNumSteps();
 			case EXPIRE_YEAR:
-				return dataPairs[QuasiId.EXPIRE_YEAR.getPosition()].getNumSteps();
+				return dataPairs[id.getPosition()].getNumSteps();
 			case PRICE:
-				return dataPairs[QuasiId.PRICE.getPosition()].getNumSteps();
+				return dataPairs[id.getPosition()].getNumSteps();
 			case PRODUCT_ID:
-				return dataPairs[QuasiId.PRODUCT_ID.getPosition()].getNumSteps();
+				return dataPairs[id.getPosition()].getNumSteps();
 			case WEIGHT:
-				return dataPairs[QuasiId.WEIGHT.getPosition()].getNumSteps();
+				return dataPairs[id.getPosition()].getNumSteps();
 			case PRODUCT_YEAR:
-				return dataPairs[QuasiId.PRODUCT_YEAR.getPosition()].getNumSteps();
+				return dataPairs[id.getPosition()].getNumSteps();
 			default:
 				return -1;
 		}
@@ -61,6 +63,58 @@ public class GeneralizationSteps {
 	
 	public GeneralizationStepsEntry[] getDataPairs() {
 		return this.dataPairs;
+	}
+	
+	private boolean isEnabled(QuasiId id) {
+		switch(id) {
+			case DEPT_ID:
+				if (dataPairs[id.getPosition()].getNumSteps() > -1) {
+					return true;
+				}
+				break;
+			case EXPIRE_YEAR:
+				if (dataPairs[id.getPosition()].getNumSteps() > -1) {
+					return true;
+				}
+				break;
+			case PRICE:
+				if (dataPairs[id.getPosition()].getNumSteps() > -1) {
+					return true;
+				}
+				break;
+			case PRODUCT_ID:
+				if (dataPairs[id.getPosition()].getNumSteps() > -1) {
+					return true;
+				}
+				break;
+			case PRODUCT_YEAR:
+				if (dataPairs[id.getPosition()].getNumSteps() > -1) {
+					return true;
+				}
+				break;
+			case WEIGHT:
+				if (dataPairs[id.getPosition()].getNumSteps() > -1) {
+					return true;
+				}
+				break;
+		}
+		return false;
+	}
+	
+	public QuasiId[] getEnabledQuasiIds() {
+		Vector<QuasiId> ids = new Vector<QuasiId>();
+		for (QuasiId id : QuasiId.values()) {
+			if (this.isEnabled(id)) {
+				ids.add(id);
+			}
+		}
+		
+		QuasiId[] enabledIds = new QuasiId[ids.size()];
+		for (int i = 0; i < ids.size(); i++) {
+			enabledIds[i] = ids.get(i);
+		}
+		
+		return enabledIds;		
 	}
 	
 	public String viewStepsOnly() {
