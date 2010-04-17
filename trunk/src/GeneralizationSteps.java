@@ -118,7 +118,7 @@ public class GeneralizationSteps {
 		private int numSteps;
 		
 		public GeneralizationStepsEntry() {
-			this.attributeId = QuasiId.DEPT_ID;
+			this.attributeId = null;
 			this.numSteps = -1;
 		}
 		
