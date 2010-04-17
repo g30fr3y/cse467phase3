@@ -8,7 +8,7 @@ public class GeneralizationTable {
 		this.selectedIds = list;
 		this.setClusterList();
 		this.setSingleTupleList();
-//		this.fillGenTable();
+		this.fillGenTable();
 	}
 
 	// some optimizations can happen here.  this is just initial code
@@ -79,10 +79,8 @@ public class GeneralizationTable {
 	}
 
 	private void fillGenTable() {
-		for (String s : clusterList) {
-			if ( !(s.contains(",")) ) {		// we only want single tuples here...
+		for (String s : singleTupleList) { // we only want single tuples here...
 				fillGenRow(s);
-			}
 		}
 	}
 	
@@ -98,6 +96,7 @@ public class GeneralizationTable {
 		
 		String allQuasiIds = getCommaSeparatedQuasiIdList();
 		String alreadyMatched = "----";
+		String clusters = "";
 		
 		// create sql to get all ProductIds
 		String sql = "SELECT " + QuasiId.PRODUCT_ID.dbName + " " +
@@ -134,12 +133,12 @@ public class GeneralizationTable {
 			// found above
 			sql = "SELECT " + QuasiId.PRODUCT_ID.getDBName() + " " +
 				  "FROM Student " +
-				  "WHERE " + getQuasiIdValuePairs(sampleProductIdQuasiIdValues, sampleProductId);
+				  "WHERE " + getQuasiIdValuePairs(sampleProductIdQuasiIdValues);
 			String[] matchingProducts = dbManager.runQuery(sql);
 			
 			// set matching productIds in allProductIds array to "----"
 			// we don't want to get duplicate data and re-match again
-			if (matchingProducts != null) {
+			if (matchingProducts.length > 1) {
 				for (String s : matchingProducts) {
 					for (int i = 0; i < allProductIds.length; i++) {
 						if (allProductIds[i].equals(s)) {
@@ -150,14 +149,18 @@ public class GeneralizationTable {
 				}
 			}
 
-			if (matchingProducts != null) {
-				for (int i = 0; i < matchingProducts.length; i++) {
-					System.out.println(sampleProductId + " " + matchingProducts[i]);
-				}				
+//			// let's see what the matches were...
+//			for (int i = 0; i < matchingProducts.length; i++) {
+//				System.out.println(sampleProductId + " " + matchingProducts[i]);
+//			}	
+			
+			String subCluster = "";
+			for (String s : matchingProducts) {
+				subCluster += "," + s; 					// add matches to sub-cluster string...
 			}
+			clusters += subCluster.substring(1) + ";"; 	// ... and end this round with a ";"
 			
 			productIdPtr++;
-
 			
 			// iterate to the next index that is not "----" and be sure
 			// to stay within length of allProductIds array
@@ -167,16 +170,28 @@ public class GeneralizationTable {
 			}
 		}
 		
+//		// just checking that all ids got checked...
+//		for (String s : allProductIds) {
+//			System.out.println(s);
+//		}
+		
 		// close that db connection...
-		dbManager.closeConnection(false);		
+		dbManager.closeConnection(false);	
+		
+		// put all our new clusters into the class's clusterList array
+		this.clusterList = clusters.split(";");
+		
+//		// view the clusters
+//		for (String s : this.clusterList) {
+//			System.out.println(s);
+//		}
 	}
 	
-	private String getQuasiIdValuePairs(String[] values, String samplePid) {
+	private String getQuasiIdValuePairs(String[] values) {
 		String output = "";
 		for (int i = 0; i < selectedIds.length; i++) {
 			output += " AND " + selectedIds[i].getDBName() + "='" + values[i] + "'";
 		}
-		output += " AND " + QuasiId.PRODUCT_ID.getDBName() + "!='" + samplePid + "'";
 		output = output.substring(5);
 		return output;		
 	}
@@ -191,8 +206,19 @@ public class GeneralizationTable {
 	}
 	
 	private void setSingleTupleList() {
-		// TODO Auto-generated method stub
+		String singles = "";
+		for (String s : clusterList) {
+			if ( !(s.contains(","))) {
+				singles += s + ";";
+			}
+		}
+		singleTupleList = singles.split(";");
 		
+//		// check the single tuple list...
+//		System.out.println("...");
+//		for (String s : this.singleTupleList) {
+//			System.out.println(s);
+//		}
 	}
 	
 	private String[] clusterList;

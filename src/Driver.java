@@ -43,7 +43,7 @@ public class Driver {
 //		System.out.println(test.dominates(test2.getDataPairs())); // false
 		
 		GeneralizationTable table = new GeneralizationTable(QuasiId.DEPT_ID, QuasiId.WEIGHT);
-//		System.out.println(table);
+		System.out.println(table);
 		
 	}
 
