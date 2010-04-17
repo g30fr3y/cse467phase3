@@ -27,11 +27,32 @@ public class Samarati {
 	    GeneralizationTable genTable;
 	    genTable = new GeneralizationTable(list);
 	    
+	    
+	    
 		// Perform the actual binary search portion of the algorithm.
-	    // The GeneralizationTable method testSolution() will be useful here
+//	    while (the solution is not found...) {
+//		    // make a GeneralizationSteps object...
+//		    GeneralizationSteps solution = new GeneralizationSteps();
+//		    
+//		    // place your guessed solution in an int array...
+//		    int[] possibleSolution = new int[list.length];
+//		    
+//		    // set your GeneralizationSteps have the values you guessed
+//		    for (int i = 0; i < list.length; i++) {
+//		    	solution.setGenSteps(list[i], possibleSolution[i]);
+//		    }
+//		    
+//		    // test the solution...
+//		    genTable.testSolution(solution, kAnon, maxSup, false);
+//			
+//			// did you find it?  wash, rinse, repeat...
+//	    }
 		
+	    
+	    
+	    
 		// get the end time...
-		
+
 		// Return a string representation of the generalized data
 		// with the execution time.
 		return "It doesn't work yet";		

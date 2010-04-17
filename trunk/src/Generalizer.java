@@ -63,4 +63,35 @@ public class Generalizer
     	return 0;
     }
     
+    
+    // just messing around here
+    public static String getGeneralizedData(GeneralizationSteps solution) {
+    	DBManager dbManager = new DBManager();
+    	String output = "";
+    	QuasiId[] enabledIds = solution.getEnabledQuasiIds();
+
+    	String quasiIds = "";
+    	for (QuasiId id : enabledIds) {
+    		quasiIds += "," + id.getDBName();
+    	}
+    	quasiIds = quasiIds.substring(1);
+    	
+    	String[] data = dbManager.runQuery("SELECT " + quasiIds + " FROM Student");
+    	
+    	dbManager.closeConnection(false);
+    	
+    	for (int i = 0; i < data.length; i+=enabledIds.length) {
+    		for (int j = 0; j < enabledIds.length; j++) {
+    			String generalizedAttribute = generalizeAttribute(data[i+j], enabledIds[j], solution.getGenStepValue(enabledIds[j]));
+    			output += generalizedAttribute + " ";
+    		}
+    		output += "\n";
+    	}
+    	return output;
+    }
+    
+    public static String generalizeAttribute(String attribute, QuasiId id, int infoLossLevels) {
+    	return attribute;
+    }
+    
 }
