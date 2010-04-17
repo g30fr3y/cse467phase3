@@ -8,10 +8,8 @@ public class GeneralizationTable {
 		this.fillGenTable();
 	}
 
-	public boolean testSolution(GeneralizationSteps solution,
-								int kAnonymity,
-								int maxSuppression,
-								boolean getTableData) {
+	public boolean testSolution(GeneralizationSteps solution, int kAnonymity,
+								int maxSuppression, boolean getTableData) {
 		int suppressionCount = 0;
 		for (GeneralizationRow gr : genTable) {
 			int numHits = gr.testSolution(solution);
@@ -68,11 +66,6 @@ public class GeneralizationTable {
 		// place all ProductIds into string array
 		String[] allProductIds = dbManager.runQuery(sql);
 		
-//		// test output
-//		for (int i = 0; i < allProductIds.length; i++) {
-//			System.out.println(allProductIds[i]);
-//		}
-		
 		// test each id in ProductIds array to find matches.
 		int productIdPtr = 0;
 		while ( productIdPtr < allProductIds.length ) {
@@ -86,11 +79,6 @@ public class GeneralizationTable {
 				  "FROM Student " +
 				  "WHERE " + QuasiId.PRODUCT_ID.getDBName() + "='" + sampleProductId + "'";	
 			String[] sampleProductIdQuasiIdValues = dbManager.runQuery(sql);
-
-//			System.out.println("values for " + sampleProductId);
-//			for (String s : sampleProductIdQuasiIdValues) {
-//				System.out.println(s);
-//			}
 			
 			// get the product id(s) for everything that matches the values
 			// found above
@@ -111,11 +99,6 @@ public class GeneralizationTable {
 					}
 				}
 			}
-
-//			// let's see what the matches were...
-//			for (int i = 0; i < matchingProducts.length; i++) {
-//				System.out.println(sampleProductId + " " + matchingProducts[i]);
-//			}	
 			
 			String subCluster = "";
 			for (String s : matchingProducts) {
@@ -133,21 +116,10 @@ public class GeneralizationTable {
 			}
 		}
 		
-//		// just checking that all ids got checked...
-//		for (String s : allProductIds) {
-//			System.out.println(s);
-//		}
-		
 		// close that db connection...
 		dbManager.closeConnection(false);	
 		
-		// put all our new clusters into the class's clusterList array
 		this.clusterList = clusters.split(";");
-		
-//		// view the clusters
-//		for (String s : this.clusterList) {
-//			System.out.println(s);
-//		}
 	}
 	
 	private String getQuasiIdValuePairs(String[] values) {
@@ -176,12 +148,6 @@ public class GeneralizationTable {
 			}
 		}
 		singleTupleList = singles.split(";");
-		
-//		// check the single tuple list...
-//		System.out.println("...");
-//		for (String s : this.singleTupleList) {
-//			System.out.println(s);
-//		}
 	}
 	
 	private String[] clusterList;
