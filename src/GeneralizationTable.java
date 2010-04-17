@@ -1,92 +1,55 @@
-import java.util.ArrayList;
-
 
 public class GeneralizationTable {
 	
 	public GeneralizationTable(QuasiId ... list) {
-		this.genTable = new ArrayList<GeneralizationCell>();
 		this.selectedIds = list;
 		this.setClusterList();
 		this.setSingleTupleList();
 		this.fillGenTable();
 	}
 
-	// some optimizations can happen here.  this is just initial code
 	public boolean testSolution(GeneralizationSteps solution,
 								int kAnonymity,
 								int maxSuppression,
 								boolean getTableData) {
-//		DBManager dbManager = new DBManager();
 		int suppressionCount = 0;
-		int lineKanonymity = 0;
-		String currentRow = genTable.get(0).getSingleTuple();
-		for (GeneralizationCell gc : genTable) {
-			if (gc.getSingleTuple().equals(currentRow)) {
-				if (solution.dominates(gc.getGeneralizationSteps().getDataPairs())) {
-					lineKanonymity++;
+		for (GeneralizationRow gr : genTable) {
+			int numHits = gr.testSolution(solution);
+			if (numHits < kAnonymity) {
+				suppressionCount++;
+				if (suppressionCount > maxSuppression) {
+					return false; // we hit the suppression limit, stop checking solution
 				}
-			} else {
-				// starting a new row
-				if (lineKanonymity < kAnonymity) {
-					// we didn't meet the kanon for the last row
-					suppressionCount++;
-					if (suppressionCount > maxSuppression) {
-//						dbManager.closeConnection(false);
-						return false;	// we broke the max suppression limit
-					}
-				}
-				
-				// we're still going if we made it thru that...
-				// reset and start the next row
-				currentRow = gc.getSingleTuple();
-				lineKanonymity = 0;
-				if (solution.dominates(gc.getGeneralizationSteps().getDataPairs())) {
-					lineKanonymity++;
-				}
-				
 			}
 		}
-//		dbManager.closeConnection(false);
+		
 		return true;
 	}
 	
-	// more formatting can happen here...
 	public String toString() {
-		String output = "";
-		output += "\t";
+		String output = "\t\t";
 		
-		// getting the header info...
-		for (String s : this.clusterList) {
-			output += s + "\t";
+		// get cluster names
+		for (String s : clusterList) {
+			output += s + "  ";
 		}
-		
+
 		output += "\n";
 		
-		// getting the cells...
-		String currentRow = genTable.get(0).getSingleTuple();
-		output += currentRow + "  ";
-		for (GeneralizationCell gc : genTable) {
-			if (gc.getSingleTuple().equals(currentRow)) {
-				output += gc.toString() + "  ";
-			} else {
-				currentRow = gc.getSingleTuple();
-				output += "\n" + currentRow + "  ";
-				output += gc.toString() + "  ";
-			}
+		// get row data
+		for (int i = 0; i < singleTupleList.length; i++) {
+			output += singleTupleList[i] + "  " + genTable[i];
+			output += "\n";
 		}
 		
 		return output;
 	}
 
 	private void fillGenTable() {
-		for (String s : singleTupleList) { // we only want single tuples here...
-				fillGenRow(s);
-		}
-	}
-	
-	private void fillGenRow(String singleTuple) {
-		for (String s : clusterList) {
-			genTable.add(new GeneralizationCell(singleTuple, s, selectedIds));
+		genTable = new GeneralizationRow[singleTupleList.length];
+		
+		for (int i = 0; i < singleTupleList.length; i++) {
+			genTable[i] = new GeneralizationRow(singleTupleList[i], selectedIds);
 		}
 	}
 
@@ -224,43 +187,66 @@ public class GeneralizationTable {
 	private String[] clusterList;
 	private String[] singleTupleList;
 	private QuasiId[] selectedIds;
-	private ArrayList<GeneralizationCell> genTable;
+	private GeneralizationRow[] genTable;
 	
 	
-	private class GeneralizationCell {
-		private String singleTuple;
-		private String targetCluster;
-		private GeneralizationSteps genSteps;
+	private class GeneralizationRow {
+		private GeneralizationSteps[] genStepsRow;
 		
-		public GeneralizationCell(String singleTuple, 
-								  String targetCluster,
-								  QuasiId[] list) {
-			this.singleTuple = singleTuple;
-			this.targetCluster = targetCluster;
-			this.setGeneralizationSteps(list);
+		public GeneralizationRow(String singleTuple, QuasiId[] list) {
+			genStepsRow = new GeneralizationSteps[clusterList.length];
+			setGeneralizationStepsRow(singleTuple, list);
 		}
 		
-		public String getSingleTuple() {
-			return singleTuple;
-		}
-		
-		private void setGeneralizationSteps(QuasiId[] list) {
-			// TODO: finish method
-			// 		 this method will take a little time to figure out
-			genSteps = new GeneralizationSteps();
-			for (QuasiId id : list) {
-				// determine generalization needed for each id in list
-				int numSteps = 2;
-				genSteps.setGenSteps(id, numSteps);
+		private void setGeneralizationStepsRow(String singleTuple, QuasiId[] list) {
+			DBManager dbManager = new DBManager();
+			for (int i = 0; i < clusterList.length; i++) {
+				genStepsRow[i] = new GeneralizationSteps();
+				for (QuasiId id : list) {
+//					System.out.println(singleTuple);
+//					System.out.println(clusterList[i]);
+					int steps = 0;
+					if (singleTuple.equals(clusterList[i])) {
+						steps = 0;
+					} else {
+						String[] attributes = dbManager.runQuery(setQuery(id,singleTuple,clusterList[i]));
+						steps = Generalizer.getNumGeneralization(attributes[0], attributes[1], id);
+					}
+					genStepsRow[i].setGenSteps(id, steps);
+				}				
 			}
+			dbManager.closeConnection(false);
 		}
 		
-		public GeneralizationSteps getGeneralizationSteps() {
-			return genSteps;
+		private String setQuery(QuasiId id, String singleTuple, String cluster) {
+			String clusterName = cluster;
+			if (cluster.contains(",")) {
+				clusterName = cluster.substring(0, cluster.indexOf(",")); 
+			}
+			return "SELECT " + id.getDBName() + " " +
+			 	   "FROM Student " +
+			       "WHERE " + QuasiId.PRODUCT_ID.getDBName() + "='" + singleTuple + "' OR " +
+			            QuasiId.PRODUCT_ID.getDBName() + "='" + clusterName + "'";
+		}
+		
+		public int testSolution(GeneralizationSteps solution) {
+			int numSolutions = 0;
+			
+			for (int i = 0; i < genStepsRow.length; i++) {
+				if (solution.dominates(genStepsRow[i].getDataPairs())) {
+					numSolutions += clusterList[i].split(",").length;	// cluster could be more than one
+				}
+			}
+			
+			return numSolutions-1; // one data pair is always zeros, not a valid solution			
 		}
 		
 		public String toString() {
-			return genSteps.viewStepsOnly();
+			String output = "";
+			for (GeneralizationSteps gs : genStepsRow) {
+				output += gs.viewStepsOnly() + "\t";
+			}
+			return output;
 		}
 	}
 }
