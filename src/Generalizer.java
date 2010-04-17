@@ -47,4 +47,20 @@ public class Generalizer
         return generalizedData;
     }
     
+    
+    /**
+     * This method takes two string attributes and generalizes each attribute 
+     * until the attributes match and then returns the number of times that
+     * the attributes had to be generalized.  
+     * 
+     * @param attribute1
+     * @param attribute2
+     * @param id
+     * @return
+     */
+    public static int getNumGeneralization(String attribute1, String attribute2, QuasiId id) {
+    	// TODO: please make this one Jose
+    	return 0;
+    }
+    
 }
