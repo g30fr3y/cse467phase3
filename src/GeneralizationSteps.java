@@ -7,12 +7,12 @@ public class GeneralizationSteps {
 			dataPairs[i] = new GeneralizationStepsEntry();
 		}
 
-		dataPairs[PRODUCT_ID_POSITION].setAttributeId(QuasiId.PRODUCT_ID);
-		dataPairs[PRICE_POSITION].setAttributeId(QuasiId.PRICE);
-		dataPairs[WEIGHT_POSITION].setAttributeId(QuasiId.WEIGHT);
-		dataPairs[DEPT_ID_POSITION].setAttributeId(QuasiId.DEPT_ID);
-		dataPairs[PRODUCT_YEAR_POSITION].setAttributeId(QuasiId.PRODUCT_YEAR);
-		dataPairs[EXPIRE_YEAR_POSITION].setAttributeId(QuasiId.EXPIRE_YEAR);
+		dataPairs[QuasiId.PRODUCT_ID.getPosition()].setAttributeId(QuasiId.PRODUCT_ID);
+		dataPairs[QuasiId.PRICE.getPosition()].setAttributeId(QuasiId.PRICE);
+		dataPairs[QuasiId.WEIGHT.getPosition()].setAttributeId(QuasiId.WEIGHT);
+		dataPairs[QuasiId.DEPT_ID.getPosition()].setAttributeId(QuasiId.DEPT_ID);
+		dataPairs[QuasiId.PRODUCT_YEAR.getPosition()].setAttributeId(QuasiId.PRODUCT_YEAR);
+		dataPairs[QuasiId.EXPIRE_YEAR.getPosition()].setAttributeId(QuasiId.EXPIRE_YEAR);
 	}
 	
 	// if id is already in vector, the old steps value become
@@ -20,22 +20,22 @@ public class GeneralizationSteps {
 	public void setGenSteps(QuasiId id, int steps) {
 		switch (id) {
 			case DEPT_ID:
-				dataPairs[DEPT_ID_POSITION].setNumSteps(steps);
+				dataPairs[QuasiId.DEPT_ID.getPosition()].setNumSteps(steps);
 				break; 
 			case EXPIRE_YEAR:
-				dataPairs[EXPIRE_YEAR_POSITION].setNumSteps(steps);
+				dataPairs[QuasiId.EXPIRE_YEAR.getPosition()].setNumSteps(steps);
 				break;
 			case PRICE:
-				dataPairs[PRICE_POSITION].setNumSteps(steps);
+				dataPairs[QuasiId.PRICE.getPosition()].setNumSteps(steps);
 				break;
 			case PRODUCT_ID:
-				dataPairs[PRODUCT_ID_POSITION].setNumSteps(steps);
+				dataPairs[QuasiId.PRODUCT_ID.getPosition()].setNumSteps(steps);
 				break;
 			case WEIGHT:
-				dataPairs[WEIGHT_POSITION].setNumSteps(steps);
+				dataPairs[QuasiId.WEIGHT.getPosition()].setNumSteps(steps);
 				break;
 			case PRODUCT_YEAR:
-				dataPairs[PRODUCT_YEAR_POSITION].setNumSteps(steps);
+				dataPairs[QuasiId.PRODUCT_YEAR.getPosition()].setNumSteps(steps);
 				break;
 		}
 	}
@@ -43,17 +43,17 @@ public class GeneralizationSteps {
 	public int getGenStepValue(QuasiId id) {
 		switch (id) {
 			case DEPT_ID:
-				return dataPairs[DEPT_ID_POSITION].getNumSteps();
+				return dataPairs[QuasiId.DEPT_ID.getPosition()].getNumSteps();
 			case EXPIRE_YEAR:
-				return dataPairs[EXPIRE_YEAR_POSITION].getNumSteps();
+				return dataPairs[QuasiId.EXPIRE_YEAR.getPosition()].getNumSteps();
 			case PRICE:
-				return dataPairs[PRICE_POSITION].getNumSteps();
+				return dataPairs[QuasiId.PRICE.getPosition()].getNumSteps();
 			case PRODUCT_ID:
-				return dataPairs[PRODUCT_ID_POSITION].getNumSteps();
+				return dataPairs[QuasiId.PRODUCT_ID.getPosition()].getNumSteps();
 			case WEIGHT:
-				return dataPairs[WEIGHT_POSITION].getNumSteps();
+				return dataPairs[QuasiId.WEIGHT.getPosition()].getNumSteps();
 			case PRODUCT_YEAR:
-				return dataPairs[PRODUCT_YEAR_POSITION].getNumSteps();
+				return dataPairs[QuasiId.PRODUCT_YEAR.getPosition()].getNumSteps();
 			default:
 				return -1;
 		}
@@ -106,12 +106,6 @@ public class GeneralizationSteps {
 	}
 	
 	private GeneralizationStepsEntry[] dataPairs;
-	private static int PRODUCT_ID_POSITION = 0;
-	private static int PRICE_POSITION = 1;
-	private static int WEIGHT_POSITION = 2;
-	private static int DEPT_ID_POSITION = 3;
-	private static int PRODUCT_YEAR_POSITION = 4;
-	private static int EXPIRE_YEAR_POSITION = 5;
 	
 	private class GeneralizationStepsEntry {
 		private QuasiId attributeId;
