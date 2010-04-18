@@ -18,7 +18,7 @@ public class Samarati {
 	// 		 This is the method required in the instructions...
 	public static String kanon(int kAnon, int maxSup, QuasiId ... list) {
 		// get the start time...
-//    	long startTime = System.currentTimeMillis();
+    	long startTime = System.currentTimeMillis();
 		
 		// Create a Samarati object and initialize the quasi-id(s)
 	    Samarati sam = new Samarati(list);
@@ -30,38 +30,36 @@ public class Samarati {
 	    
 	    
 
-//	    GeneralizationSteps solution = new GeneralizationSteps();
+	    GeneralizationSteps solution = new GeneralizationSteps();
 		// Perform the actual binary search portion of the algorithm.
-//	    while (the solution is not found...) {
-//		    // make a GeneralizationSteps object...
-//		    solution = new GeneralizationSteps();
-//		    
-//		    // place your guessed solution in an int array...
-//		    int[] possibleSolution = new int[list.length];
-//		    
-//		    // set your GeneralizationSteps to have the values you guessed
-//		    for (int i = 0; i < list.length; i++) {
-//		    	solution.setGenSteps(list[i], possibleSolution[i]);
-//		    }
-//		    
-//		    // test the solution...
-//		    genTable.testSolution(solution, kAnon, maxSup, false);
-//			
-//			// did you find it?  wash, rinse, repeat...
-//	    }
+	    boolean foundIt = false;
+	    while ( !foundIt ) {
+		    // make a GeneralizationSteps object...
+		    solution = new GeneralizationSteps();
+		    
+		    // place your guessed solution in an int array...
+		    int[] possibleSolution = new int[list.length];
+		    
+		    // set your GeneralizationSteps to have the values you guessed
+		    for (int i = 0; i < list.length; i++) {
+		    	solution.setGenSteps(list[i], possibleSolution[i]);
+		    }
+		    
+		    // test the solution...
+			// did you find it?  wash, rinse, repeat...
+		    foundIt = genTable.testSolution(solution, kAnon, maxSup, false);
+	    }
 		
 	    
 	    
 	    
 		// get the end time...
-//		long endTime = System.currentTimeMillis();
-//	    String totalTime = (endTime-startTime)/1000.0 + " seconds";
+		long endTime = System.currentTimeMillis();
+	    String totalTime = (endTime-startTime)/1000.0 + " seconds";
 
-		// Return a string representation of the generalized data
-//	    String data = Generalizer.getGeneralizedData(solution);
-		// with the execution time.
-//	    return data + "\n" + totalTime;
-		return "It doesn't work yet";		
+		// Return a string representation of the generalized data/execution time
+	    String data = Generalizer.getGeneralizedData(solution);
+	    return data + "\n" + totalTime;	
 	}
 
 	/**
