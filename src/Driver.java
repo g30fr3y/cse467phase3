@@ -8,11 +8,16 @@ public class Driver
 
     public static void main(String[] args)
     {
-//        System.out.print( Generalizer.getNumGeneralization( "1010", "0010", QuasiId.PRODUCT_ID ) );
-        QuasiId id = QuasiId.DEPT_ID;
-        String entry = "2";
-        for ( int i = 0; i < id.maxGeneralization; i++ )
-            System.out.println( Generalizer.generalize( entry , id , i ) );
+        QuasiId id = QuasiId.PRICE;
+        String entry = "98999";
+        String entry2 = "98998";
+        for ( int i = 0; i <= id.maxGeneralization ; i++ )
+        {
+            System.out.print( Generalizer.generalize( entry , id , i ) + "\t");
+            System.out.println( Generalizer.generalize( entry2 , id , i ) );
+        }
+        
+        System.out.print( Generalizer.getNumGeneralization( entry , entry2, id ) );
         
         // DBManager dbManager = new DBManager("", "test.xls");
         // String[] info = dbManager.getAllTableData();
@@ -49,9 +54,9 @@ public class Driver
         // System.out.println(test.dominates(test1.getDataPairs())); // true
         // System.out.println(test.dominates(test2.getDataPairs())); // false
 
-        // GeneralizationTable table = new
-        // GeneralizationTable(QuasiId.DEPT_ID);//, QuasiId.WEIGHT);
-        // System.out.println(table);
+         GeneralizationTable table = new
+         GeneralizationTable(QuasiId.DEPT_ID);//, QuasiId.WEIGHT);
+         System.out.println(table);
         // GeneralizationSteps solution = new GeneralizationSteps();
         // solution.setGenSteps(QuasiId.DEPT_ID, 5);
         // solution.setGenSteps(QuasiId.PRODUCT_ID, 5);

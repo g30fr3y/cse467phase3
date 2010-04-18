@@ -10,22 +10,21 @@ public class Generalizer
 {
 
     // Index names, needed to do this nonetheless
-    static final int PRODUCT_ID = 0, 
-                     PRICE = 1, 
-                     DEPT_ID = 2, 
-                     WEIGHT = 3, 
-                     PRODUCT_YEAR = 4, 
-                     EXPIRE_YEAR = 5;
+    static final int PRODUCT_ID = 0, PRICE = 1, DEPT_ID = 2, WEIGHT = 3, PRODUCT_YEAR = 4, EXPIRE_YEAR = 5;
 
-    // TODO: Since this is a property of PRODUCT_ID, it may be moved to the enum
-    // stuff
+    // TODO: Since this is a property of PRODUCT_ID, it may be moved to the enum stuff
     static final String PRODUCT_ID_MAX_GEN = "****";
-    static final String WEIGHT_MAX_GEN = "<0-9>";
+    static final String WEIGHT_MAX_GEN = "<0-" + QuasiId.WEIGHT.maxValue + ">";
     static final String YEAR_MAX_GEN = "****";
-    
     static final double WEIGHT_CLUSTER_FACTOR = 2.0;
     static final double DEPT_ID_CLUSTER_FACTOR = WEIGHT_CLUSTER_FACTOR;
     static final double PRICE_CLUSTER_FACTOR = 10.0;
+
+    // If the year has length one then it means, it must be our empty value of
+    // "0"
+    static final int EMPTY = 1;
+    // To verify that the algorithm works in all cases
+    static final String EMPTY_YEAR = YEAR_MAX_GEN;
 
     // Find a better way to create these global ID
     /**
@@ -131,37 +130,52 @@ public class Generalizer
      */
     private static String generalizeWeight(String weight, int numGeneralizations)
     {
-        //TODO: Not that ez to implement...but I did it!
         return generalizeRanges( weight, WEIGHT_CLUSTER_FACTOR, numGeneralizations, QuasiId.WEIGHT );
     }
-    
-    private static String generalizeRanges(String range , double clusterFactor, int numGeneralizations, QuasiId id)
+
+    /**
+     * Generalizes range_value into a range determined by number of
+     * generalizations and a specified cluster factor
+     * 
+     * @param range_value
+     *            The entry value that will be generalized into a range of
+     *            values.
+     * @param clusterFactor
+     *            Varies depending on how many values will be in each range.
+     * @param numGeneralizations
+     *            Determines the number of generalizations to be performed on
+     *            range_value
+     * @param id
+     *            Used to determine the boundaries of the ranges
+     * @return Returns the generalized range_value
+     */
+    private static String generalizeRanges(String range_value, double clusterFactor, int numGeneralizations, QuasiId id)
     {
-        if ( numGeneralizations <= 0)
-            return range;
-        
-        if( numGeneralizations < id.maxGeneralization )
+        if (numGeneralizations <= 0)
+            return range_value;
+
+        if (numGeneralizations < id.maxGeneralization)
         {
             // Determine cluster size for the range
-            int groupSize = (int)Math.pow( clusterFactor, numGeneralizations );
-            
+            int groupSize = (int) Math.pow( clusterFactor, numGeneralizations );
+
             // Find the hashing location of the corresponding value
-            int hashValue = (int)(Integer.parseInt( range )/groupSize);
-            
+            int hashValue = (int) (Integer.parseInt( range_value ) / groupSize);
+
             // Bounds for range
-            int lowerBound = hashValue*groupSize;
-            String upperBound = (lowerBound + ( lowerBound - 1 )) < id.maxValue ? lowerBound + ( groupSize - 1) + "" : "*";
-            
-            range = "<" + lowerBound + "-" + upperBound + ">";
+            int lowerBound = hashValue * groupSize;
+            String upperBound = (lowerBound + (groupSize - 1)) < id.maxValue ? lowerBound + (groupSize - 1) + "" : "*";
+
+            range_value = "<" + lowerBound + "-" + upperBound + ">";
         }
         else
         {
-            range = "<0-" + id.maxValue + ">";
+            range_value = "<0-" + id.maxValue + ">";
         }
-        
-        return range;
+
+        return range_value;
     }
-    
+
     /**
      * Generalizes productYear a certain amount of times
      * 
@@ -179,8 +193,6 @@ public class Generalizer
      */
     private static String generalizeExpireYear(String expireYear, int numGeneralizations)
     {
-        // TODO: What is supposed to happen if expireYear is empty, or 0 in our
-        // case
         return generalizeYear( expireYear, numGeneralizations, QuasiId.EXPIRE_YEAR );
     }
 
@@ -195,6 +207,12 @@ public class Generalizer
         if (numGeneralizations <= 0)
             return year;
 
+        // Check the case of the empty year and set empty year with a workable
+        // string
+        if (year.length() == EMPTY)
+            year = EMPTY_YEAR;
+
+        // Perform the generalizations specified
         if (numGeneralizations < id.maxGeneralization)
         {
             // I guess the only way to do this is to brute force it
@@ -223,29 +241,29 @@ public class Generalizer
      * until the attributes match and then returns the number of times that the
      * attributes had to be generalized.
      * 
-     * @return Returns the number of times it takes for the two attributes to be generalized.
+     * @return Returns the number of times it takes for the two attributes to be
+     *         generalized.
      */
     public static int getNumGeneralization(String attribute1, String attribute2, QuasiId id)
     {
-        // TODO: please make this one Jose
-        
         int numGeneralizations = 0;
+
         // First check obvious scenario
-        if( attribute1.equals( attribute2 ) )
+        if (attribute1.equals( attribute2 ))
             return numGeneralizations;
-        
+
         // Now iterate through the generalizations until both match
-        for ( int i = 1; i <= id.maxGeneralization ; i++ )
+        for ( int i = 1; i <= id.maxGeneralization; i++ )
         {
             numGeneralizations++;
-            if( generalize( attribute1, id, i ).equals( generalize( attribute2, id, i ) ) )
+            if (generalize( attribute1, id, i ).equals( generalize( attribute2, id, i ) ))
                 break; // It's a match!
         }
-        
+
         return numGeneralizations;
     }
-    
-    // just messing around here
+
+    // TODO: just messing around here
     public static String getGeneralizedData(GeneralizationSteps solution)
     {
         DBManager dbManager = new DBManager();
