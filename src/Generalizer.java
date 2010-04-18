@@ -8,19 +8,15 @@
  */
 public class Generalizer
 {
-    
+
     // Index names, needed to do this nonetheless
-    static final int PRODUCT_ID   = 0, 
-                     PRICE        = 1, 
-                     DEPT_ID      = 2, 
-                     WEIGHT       = 3, 
-                     PRODUCT_YEAR = 4, 
-                     EXPIRE_YEAR  = 5;
-    
-    // TODO: Since this is a property of PRODUCT_ID, it may be moved to the enum stuff
+    static final int PRODUCT_ID = 0, PRICE = 1, DEPT_ID = 2, WEIGHT = 3, PRODUCT_YEAR = 4, EXPIRE_YEAR = 5;
+
+    // TODO: Since this is a property of PRODUCT_ID, it may be moved to the enum
+    // stuff
     static final String PRODUCT_ID_MAX_GEN = "****";
     static final String YEAR_MAX_GEN = "****";
-    
+
     // Find a better way to create these global ID
     /**
      * This method takes care of generalizing a given attribute a certain amount
@@ -30,13 +26,13 @@ public class Generalizer
      *            The attribute that needs to be generalized.
      * @param id
      *            Determines what kind of generalization to perform.
-     * @param infoLossLevels 
+     * @param infoLossLevels
      *            The number of levels to generalize.
      */
     public static String generalize(String attribute, QuasiId id, int infoLossLevels)
     {
         // Select the kind of generalization to perform
-        switch(id.position)
+        switch (id.position)
         {
             case PRODUCT_ID:
                 attribute = generalizeProductID( attribute, infoLossLevels );
@@ -59,102 +55,107 @@ public class Generalizer
 
     /**
      * Generalizes productID a certain amount of times
-     * @param numGeneralizations 
-     *              Determines the number of generalizations to apply to productID 
+     * 
+     * @param numGeneralizations
+     *            Determines the number of generalizations to apply to productID
      * @return Returns the generalized productID
      */
     private static String generalizeProductID(String productID, int numGeneralizations)
     {
         // If numGenerlizations is 0 or less then nothing will be generalized
-        if ( numGeneralizations <= 0 )
+        if (numGeneralizations <= 0)
             return productID;
-        
+
         // Determine the length of the remaining substring
-        int endIndex = (productID.length() - numGeneralizations) > 0 ? productID.length() - numGeneralizations : QuasiId.PRODUCT_ID.maxGeneralization ;
-        
-        if ( endIndex != QuasiId.PRODUCT_ID.maxGeneralization )
+        int endIndex = (productID.length() - numGeneralizations) > 0 ? productID.length() - numGeneralizations
+                : QuasiId.PRODUCT_ID.maxGeneralization;
+
+        if (endIndex != QuasiId.PRODUCT_ID.maxGeneralization)
         {
             // Trim the string down to it's general form
             productID = productID.substring( 0, endIndex );
-            
+
             // Ahh!! I got distracted! Back to coding :)
-            
+
             // Append 'i' amount of asterisks to the general string
-            for(int i = 0; i < (QuasiId.PRODUCT_ID.maxGeneralization - endIndex); i++)
+            for ( int i = 0; i < (QuasiId.PRODUCT_ID.maxGeneralization - endIndex); i++ )
             {
                 productID += "*";
             }
         }
-        else 
+        else
         {
             productID = PRODUCT_ID_MAX_GEN;
         }
-        
+
         return productID;
     }
 
     /**
      * Generalizes price a certain amount of times
-     * @param price
-     * @param numGeneralizations
+     * 
      * @return Returns the generalized price
      */
-    private static String generalizePrice( String price, int numGeneralizations)
+    private static String generalizePrice(String price, int numGeneralizations)
     {
         return price;
     }
-    
+
     /**
      * Generalizes deptID a certain amount of times
-     * @param deptID
-     * @param numGeneralizations
+     * 
      * @return Returns the generalized deptID
      */
-    private static String generalizeDeptID( String deptID, int numGeneralizations )
+    private static String generalizeDeptID(String deptID, int numGeneralizations)
     {
         return deptID;
     }
-    
+
     /**
      * Generalizes weight a certain amount of times
-     * @param weight
-     * @param numGeneralizations
+     * 
      * @return Returns the generalized weight
      */
-    private static String generalizeWeight( String weight, int numGeneralizations )
+    private static String generalizeWeight(String weight, int numGeneralizations)
     {
+        //TODO: Not that ez to implement...
         return weight;
     }
-    
+
     /**
      * Generalizes productYear a certain amount of times
-     * @param productYear
-     * @param numGeneralizations
+     * 
      * @return Returns the generalized productYear
      */
-    private static String  generalizeProductYear( String productYear, int numGeneralizations )
+    private static String generalizeProductYear(String productYear, int numGeneralizations)
     {
         return generalizeYear( productYear, numGeneralizations );
     }
-    
+
     /**
      * Generalizes expireYear a certain amount of times
-     * @param expireYear
-     * @param numGeneralizations
+     * 
      * @return Returns the generalized expireYear
      */
-    private static String generalizeExpireYear( String expireYear, int numGeneralizations )
+    private static String generalizeExpireYear(String expireYear, int numGeneralizations)
     {
-        //TODO: What is supposed to happen if expireYear is empty, or 0 in our case
+        // TODO: What is supposed to happen if expireYear is empty, or 0 in our
+        // case
         return generalizeYear( expireYear, numGeneralizations );
     }
-    
-    private static String generalizeYear( String year, int numGeneralizations )
+
+    /**
+     * Generalizes year a certain amount of times, this is a template used for
+     * expireYear and productYear
+     * 
+     * @return Returns the generalized year
+     */
+    private static String generalizeYear(String year, int numGeneralizations)
     {
-        if ( numGeneralizations <= 0 )
+        if (numGeneralizations <= 0)
             return year;
 
-        if ( numGeneralizations < QuasiId.PRODUCT_YEAR.maxGeneralization )
+        if (numGeneralizations < QuasiId.PRODUCT_YEAR.maxGeneralization)
         {
             // I guess the only way to do this is to brute force it
             switch (numGeneralizations)
@@ -163,34 +164,45 @@ public class Generalizer
                 case 1:
                     year = year.charAt( 2 ) + "0s";
                     break;
-                    // So if you have 1992 -> 19**
+                // So if you have 1992 -> 19**
                 case 2:
                     year = year.substring( 0, 2 ) + "**";
             }
-            
+
         }
         else
         {
             year = YEAR_MAX_GEN;
         }
-        
+
         return year;
     }
-    
+
     /**
      * This method takes two string attributes and generalizes each attribute
      * until the attributes match and then returns the number of times that the
      * attributes had to be generalized.
      * 
-     * @param attribute1
-     * @param attribute2
-     * @param id
-     * @return
+     * @return Returns the number of times it takes for the two attributes to be generalized.
      */
     public static int getNumGeneralization(String attribute1, String attribute2, QuasiId id)
     {
         // TODO: please make this one Jose
-        return 0;
+        
+        int numGeneralizations = 0;
+        // First check obvious scenario
+        if( attribute1.equals( attribute2 ) )
+            return numGeneralizations;
+        
+        // Now iterate through the generalizations until both match
+        for ( int i = 1; i <= id.maxGeneralization ; i++ )
+        {
+            numGeneralizations++;
+            if( generalize( attribute1, id, i ).equals( generalize( attribute2, id, i ) ) )
+                break; // It's a match!
+        }
+        
+        return numGeneralizations;
     }
 
     // just messing around here
