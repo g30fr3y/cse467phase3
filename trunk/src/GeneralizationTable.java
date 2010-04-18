@@ -2,12 +2,13 @@
 public class GeneralizationTable {
 	
 	public GeneralizationTable(QuasiId ... list) {
-		this.selectedIds = list;
-		this.setClusterList();
-		this.setSingleTupleList();
-		this.fillGenTable();
+		selectedIds = list;
+		setClusterList();
+		setSingleTupleList();
+		setAttributeLists();
+		fillGenTable();
 	}
-
+	
 	public boolean testSolution(GeneralizationSteps solution, int kAnonymity,
 								int maxSuppression, boolean getTableData) {
 		int suppressionCount = 0;
@@ -47,7 +48,7 @@ public class GeneralizationTable {
 		genTable = new GeneralizationRow[singleTupleList.length];
 		
 		for (int i = 0; i < singleTupleList.length; i++) {
-			genTable[i] = new GeneralizationRow(singleTupleList[i], selectedIds);
+			genTable[i] = new GeneralizationRow(i);
 		}
 	}
 
@@ -150,38 +151,78 @@ public class GeneralizationTable {
 		singleTupleList = singles.split(";");
 	}
 	
+	private void setAttributeLists() {
+		clusterListAttributes = new String[clusterList.length][selectedIds.length];
+		singleTupleAttributes = new String[singleTupleList.length][selectedIds.length];
+		
+		DBManager dbManager = new DBManager();
+		
+		String quasiIds = "";
+	    for ( QuasiId id : selectedIds )
+	    {
+	        quasiIds += "," + id.getDBName();
+	    }
+	    quasiIds = quasiIds.substring( 1 );
+		
+		for (int i = 0; i < singleTupleList.length; i++) {
+			String[] attributes = dbManager.runQuery( "SELECT " + quasiIds + " " +
+													  "FROM Student " + 
+													  "WHERE " + QuasiId.PRODUCT_ID.getDBName() + 
+													  "='" + singleTupleList[i] + "'");
+			for (int j = 0; j < selectedIds.length; j++) {
+				singleTupleAttributes[i][j] = attributes[j]; 
+			}
+		}
+		
+		for (int i = 0; i < clusterList.length; i++) {
+			String clusterName = clusterList[i];
+			if (clusterName.contains(",")) {
+				clusterName = clusterList[i].substring(0, clusterList[i].indexOf(",")); 
+			}
+			String[] attributes = dbManager.runQuery( "SELECT " + quasiIds + " " +
+													  "FROM Student " + 
+													  "WHERE " + QuasiId.PRODUCT_ID.getDBName() + 
+													  "='" + clusterName + "'");
+			for (int j = 0; j < selectedIds.length; j++) {
+				clusterListAttributes[i][j] = attributes[j];
+			}
+		}
+		
+		dbManager.closeConnection(false);
+	}
+
 	private String[] clusterList;
 	private String[] singleTupleList;
 	private QuasiId[] selectedIds;
 	private GeneralizationRow[] genTable;
+	private String[][] clusterListAttributes;
+	private String[][] singleTupleAttributes;
 	
 	
 	private class GeneralizationRow {
 		private GeneralizationSteps[] genStepsRow;
 		
-		public GeneralizationRow(String singleTuple, QuasiId[] list) {
+		public GeneralizationRow(int singleTupleIndex) {
 			genStepsRow = new GeneralizationSteps[clusterList.length];
-			setGeneralizationStepsRow(singleTuple, list);
+			setGeneralizationStepsRow(singleTupleIndex);
 		}
 		
-		private void setGeneralizationStepsRow(String singleTuple, QuasiId[] list) {
-			DBManager dbManager = new DBManager();
+		private void setGeneralizationStepsRow(int singleTupleIndex) {
+			String singleTuple = singleTupleList[singleTupleIndex];
 			for (int i = 0; i < clusterList.length; i++) {
 				genStepsRow[i] = new GeneralizationSteps();
-				for (QuasiId id : list) {
-//					System.out.println(singleTuple);
-//					System.out.println(clusterList[i]);
+				for (int j = 0; j < selectedIds.length; j++) {
 					int steps = 0;
 					if (singleTuple.equals(clusterList[i])) {
 						steps = 0;
 					} else {
-						String[] attributes = dbManager.runQuery(setQuery(id,singleTuple,clusterList[i]));
-						steps = Generalizer.getNumGeneralization(attributes[0], attributes[1], id);
+						String attribute1 = singleTupleAttributes[singleTupleIndex][j];
+						String attribute2 = clusterListAttributes[i][j];
+						steps = Generalizer.getNumGeneralization(attribute1, attribute2, selectedIds[j]);
 					}
-					genStepsRow[i].setGenSteps(id, steps);
+					genStepsRow[i].setGenSteps(selectedIds[j], steps);
 				}				
 			}
-			dbManager.closeConnection(false);
 		}
 		
 		private String setQuery(QuasiId id, String singleTuple, String cluster) {
