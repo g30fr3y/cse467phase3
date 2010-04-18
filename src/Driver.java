@@ -8,8 +8,12 @@ public class Driver
 
     public static void main(String[] args)
     {
-        for ( int i = 0; i < 5; i++ )
-            System.out.println( Generalizer.generalize( "2010", QuasiId.EXPIRE_YEAR, i ) );
+//        System.out.print( Generalizer.getNumGeneralization( "1010", "0010", QuasiId.PRODUCT_ID ) );
+        QuasiId id = QuasiId.DEPT_ID;
+        String entry = "2";
+        for ( int i = 0; i < id.maxGeneralization; i++ )
+            System.out.println( Generalizer.generalize( entry , id , i ) );
+        
         // DBManager dbManager = new DBManager("", "test.xls");
         // String[] info = dbManager.getAllTableData();
         // for (String s : info) {
