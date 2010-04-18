@@ -18,6 +18,7 @@ public class Samarati {
 	// 		 This is the method required in the instructions...
 	public static String kanon(int kAnon, int maxSup, QuasiId ... list) {
 		// get the start time...
+//    	long startTime = System.currentTimeMillis();
 		
 		// Create a Samarati object and initialize the quasi-id(s)
 	    Samarati sam = new Samarati(list);
@@ -28,16 +29,17 @@ public class Samarati {
 	    genTable = new GeneralizationTable(list);
 	    
 	    
-	    
+
+//	    GeneralizationSteps solution = new GeneralizationSteps();
 		// Perform the actual binary search portion of the algorithm.
 //	    while (the solution is not found...) {
 //		    // make a GeneralizationSteps object...
-//		    GeneralizationSteps solution = new GeneralizationSteps();
+//		    solution = new GeneralizationSteps();
 //		    
 //		    // place your guessed solution in an int array...
 //		    int[] possibleSolution = new int[list.length];
 //		    
-//		    // set your GeneralizationSteps have the values you guessed
+//		    // set your GeneralizationSteps to have the values you guessed
 //		    for (int i = 0; i < list.length; i++) {
 //		    	solution.setGenSteps(list[i], possibleSolution[i]);
 //		    }
@@ -52,9 +54,13 @@ public class Samarati {
 	    
 	    
 		// get the end time...
+//		long endTime = System.currentTimeMillis();
+//	    String totalTime = (endTime-startTime)/1000.0 + " seconds";
 
 		// Return a string representation of the generalized data
+//	    String data = Generalizer.getGeneralizedData(solution);
 		// with the execution time.
+//	    return data + "\n" + totalTime;
 		return "It doesn't work yet";		
 	}
 
