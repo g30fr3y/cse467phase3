@@ -19,6 +19,7 @@ public class Generalizer
     
     // TODO: Since this is a property of PRODUCT_ID, it may be moved to the enum stuff
     static final String PRODUCT_ID_MAX_GEN = "****";
+    static final String YEAR_MAX_GEN = "****";
     
     // Find a better way to create these global ID
     /**
@@ -47,8 +48,10 @@ public class Generalizer
             case WEIGHT:
                 break;
             case PRODUCT_YEAR:
+                attribute = generalizeProductYear( attribute, infoLossLevels );
                 break;
             case EXPIRE_YEAR:
+                attribute = generalizeExpireYear( attribute, infoLossLevels );
                 break;
         }
         return attribute;
@@ -90,6 +93,90 @@ public class Generalizer
         return productID;
     }
 
+    /**
+     * Generalizes price a certain amount of times
+     * @param price
+     * @param numGeneralizations
+     * @return Returns the generalized price
+     */
+    private static String generalizePrice( String price, int numGeneralizations)
+    {
+        return price;
+    }
+    
+    /**
+     * Generalizes deptID a certain amount of times
+     * @param deptID
+     * @param numGeneralizations
+     * @return Returns the generalized deptID
+     */
+    private static String generalizeDeptID( String deptID, int numGeneralizations )
+    {
+        return deptID;
+    }
+    
+    /**
+     * Generalizes weight a certain amount of times
+     * @param weight
+     * @param numGeneralizations
+     * @return Returns the generalized weight
+     */
+    private static String generalizeWeight( String weight, int numGeneralizations )
+    {
+        return weight;
+    }
+    
+    /**
+     * Generalizes productYear a certain amount of times
+     * @param productYear
+     * @param numGeneralizations
+     * @return Returns the generalized productYear
+     */
+    private static String  generalizeProductYear( String productYear, int numGeneralizations )
+    {
+        return generalizeYear( productYear, numGeneralizations );
+    }
+    
+    /**
+     * Generalizes expireYear a certain amount of times
+     * @param expireYear
+     * @param numGeneralizations
+     * @return Returns the generalized expireYear
+     */
+    private static String generalizeExpireYear( String expireYear, int numGeneralizations )
+    {
+        //TODO: What is supposed to happen if expireYear is empty, or 0 in our case
+        return generalizeYear( expireYear, numGeneralizations );
+    }
+    
+    private static String generalizeYear( String year, int numGeneralizations )
+    {
+        if ( numGeneralizations <= 0 )
+            return year;
+
+        if ( numGeneralizations < QuasiId.PRODUCT_YEAR.maxGeneralization )
+        {
+            // I guess the only way to do this is to brute force it
+            switch (numGeneralizations)
+            {
+                // So if you have 1992 -> 90s
+                case 1:
+                    year = year.charAt( 2 ) + "0s";
+                    break;
+                    // So if you have 1992 -> 19**
+                case 2:
+                    year = year.substring( 0, 2 ) + "**";
+            }
+            
+        }
+        else
+        {
+            year = YEAR_MAX_GEN;
+        }
+        
+        return year;
+    }
+    
     /**
      * This method takes two string attributes and generalizes each attribute
      * until the attributes match and then returns the number of times that the
