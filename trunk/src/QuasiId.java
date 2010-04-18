@@ -1,4 +1,5 @@
 
+// This enum is freaken hardcore!
 public enum QuasiId {
 	// TODO: need to set these max gens to the correct value
 	PRODUCT_ID(4, "`productID`", 0),
