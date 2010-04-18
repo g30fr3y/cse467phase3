@@ -28,15 +28,19 @@ public class Samarati {
 	    GeneralizationTable genTable;
 	    genTable = new GeneralizationTable(list);
 	    
-	    
-
 	    GeneralizationSteps solution = new GeneralizationSteps();
-		// Perform the actual binary search portion of the algorithm.
+	    
 	    boolean foundIt = false;
 	    while ( !foundIt ) {
 		    // make a GeneralizationSteps object...
 		    solution = new GeneralizationSteps();
 		    
+		    // do your binary search logic here...  
+		    //
+		    //
+		    //
+		    //
+		    //
 		    // place your guessed solution in an int array...
 		    int[] possibleSolution = new int[list.length];
 		    
@@ -49,10 +53,7 @@ public class Samarati {
 			// did you find it?  wash, rinse, repeat...
 		    foundIt = genTable.testSolution(solution, kAnon, maxSup, false);
 	    }
-		
-	    
-	    
-	    
+
 		// get the end time...
 		long endTime = System.currentTimeMillis();
 	    String totalTime = (endTime-startTime)/1000.0 + " seconds";
