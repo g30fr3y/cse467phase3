@@ -10,12 +10,22 @@ public class Generalizer
 {
 
     // Index names, needed to do this nonetheless
-    static final int PRODUCT_ID = 0, PRICE = 1, DEPT_ID = 2, WEIGHT = 3, PRODUCT_YEAR = 4, EXPIRE_YEAR = 5;
+    static final int PRODUCT_ID = 0, 
+                     PRICE = 1, 
+                     DEPT_ID = 2, 
+                     WEIGHT = 3, 
+                     PRODUCT_YEAR = 4, 
+                     EXPIRE_YEAR = 5;
 
     // TODO: Since this is a property of PRODUCT_ID, it may be moved to the enum
     // stuff
     static final String PRODUCT_ID_MAX_GEN = "****";
+    static final String WEIGHT_MAX_GEN = "<0-9>";
     static final String YEAR_MAX_GEN = "****";
+    
+    static final double WEIGHT_CLUSTER_FACTOR = 2.0;
+    static final double DEPT_ID_CLUSTER_FACTOR = WEIGHT_CLUSTER_FACTOR;
+    static final double PRICE_CLUSTER_FACTOR = 10.0;
 
     // Find a better way to create these global ID
     /**
@@ -38,10 +48,13 @@ public class Generalizer
                 attribute = generalizeProductID( attribute, infoLossLevels );
                 break;
             case PRICE:
+                attribute = generalizePrice( attribute, infoLossLevels );
                 break;
             case DEPT_ID:
+                attribute = generalizeDeptID( attribute, infoLossLevels );
                 break;
             case WEIGHT:
+                attribute = generalizeWeight( attribute, infoLossLevels );
                 break;
             case PRODUCT_YEAR:
                 attribute = generalizeProductYear( attribute, infoLossLevels );
@@ -98,7 +111,7 @@ public class Generalizer
      */
     private static String generalizePrice(String price, int numGeneralizations)
     {
-        return price;
+        return generalizeRanges( price, PRICE_CLUSTER_FACTOR, numGeneralizations, QuasiId.PRICE );
     }
 
     /**
@@ -108,7 +121,7 @@ public class Generalizer
      */
     private static String generalizeDeptID(String deptID, int numGeneralizations)
     {
-        return deptID;
+        return generalizeRanges( deptID, DEPT_ID_CLUSTER_FACTOR, numGeneralizations, QuasiId.DEPT_ID );
     }
 
     /**
@@ -118,10 +131,37 @@ public class Generalizer
      */
     private static String generalizeWeight(String weight, int numGeneralizations)
     {
-        //TODO: Not that ez to implement...
-        return weight;
+        //TODO: Not that ez to implement...but I did it!
+        return generalizeRanges( weight, WEIGHT_CLUSTER_FACTOR, numGeneralizations, QuasiId.WEIGHT );
     }
-
+    
+    private static String generalizeRanges(String range , double clusterFactor, int numGeneralizations, QuasiId id)
+    {
+        if ( numGeneralizations <= 0)
+            return range;
+        
+        if( numGeneralizations < id.maxGeneralization )
+        {
+            // Determine cluster size for the range
+            int groupSize = (int)Math.pow( clusterFactor, numGeneralizations );
+            
+            // Find the hashing location of the corresponding value
+            int hashValue = (int)(Integer.parseInt( range )/groupSize);
+            
+            // Bounds for range
+            int lowerBound = hashValue*groupSize;
+            String upperBound = (lowerBound + ( lowerBound - 1 )) < id.maxValue ? lowerBound + ( groupSize - 1) + "" : "*";
+            
+            range = "<" + lowerBound + "-" + upperBound + ">";
+        }
+        else
+        {
+            range = "<0-" + id.maxValue + ">";
+        }
+        
+        return range;
+    }
+    
     /**
      * Generalizes productYear a certain amount of times
      * 
@@ -129,7 +169,7 @@ public class Generalizer
      */
     private static String generalizeProductYear(String productYear, int numGeneralizations)
     {
-        return generalizeYear( productYear, numGeneralizations );
+        return generalizeYear( productYear, numGeneralizations, QuasiId.PRODUCT_YEAR );
     }
 
     /**
@@ -141,7 +181,7 @@ public class Generalizer
     {
         // TODO: What is supposed to happen if expireYear is empty, or 0 in our
         // case
-        return generalizeYear( expireYear, numGeneralizations );
+        return generalizeYear( expireYear, numGeneralizations, QuasiId.EXPIRE_YEAR );
     }
 
     /**
@@ -150,12 +190,12 @@ public class Generalizer
      * 
      * @return Returns the generalized year
      */
-    private static String generalizeYear(String year, int numGeneralizations)
+    private static String generalizeYear(String year, int numGeneralizations, QuasiId id)
     {
         if (numGeneralizations <= 0)
             return year;
 
-        if (numGeneralizations < QuasiId.PRODUCT_YEAR.maxGeneralization)
+        if (numGeneralizations < id.maxGeneralization)
         {
             // I guess the only way to do this is to brute force it
             switch (numGeneralizations)
@@ -204,7 +244,7 @@ public class Generalizer
         
         return numGeneralizations;
     }
-
+    
     // just messing around here
     public static String getGeneralizedData(GeneralizationSteps solution)
     {
