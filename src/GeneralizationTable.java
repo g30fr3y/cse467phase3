@@ -240,7 +240,7 @@ public class GeneralizationTable {
 			int numSolutions = 0;
 			
 			for (int i = 0; i < genStepsRow.length; i++) {
-				if (solution.dominates(genStepsRow[i].getDataPairs())) {
+				if (solution.dominates(genStepsRow[i].getAllInfoLossLevels())) {
 					numSolutions += clusterList[i].split(",").length;	// cluster could be more than one
 				}
 			}
@@ -251,7 +251,7 @@ public class GeneralizationTable {
 		public String toString() {
 			String output = "";
 			for (GeneralizationSteps gs : genStepsRow) {
-				output += gs.viewStepsOnly() + "\t";
+				output += gs.toString() + "\t";
 			}
 			return output;
 		}
