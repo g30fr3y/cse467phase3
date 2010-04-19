@@ -27,6 +27,18 @@ public class DBManager
         this.openConnection(password);
         this.populateDatabase();
     }
+
+    public DBManager(String inputFile)
+    {
+        this.inputFile = inputFile;
+        this.model = new ResultsModel();
+        this.user = "root";
+        this.url = "jdbc:mysql://localhost/" + DB_NAME;
+        
+        this.setupDatabase(DEFAULT_PASSWORD);
+        this.openConnection(DEFAULT_PASSWORD);
+        this.populateDatabase();
+    }
     
     public DBManager () {
         this.model = new ResultsModel();
