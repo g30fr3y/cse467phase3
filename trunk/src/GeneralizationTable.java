@@ -225,17 +225,6 @@ public class GeneralizationTable {
 			}
 		}
 		
-		private String setQuery(QuasiId id, String singleTuple, String cluster) {
-			String clusterName = cluster;
-			if (cluster.contains(",")) {
-				clusterName = cluster.substring(0, cluster.indexOf(",")); 
-			}
-			return "SELECT " + id.getDBName() + " " +
-			 	   "FROM Student " +
-			       "WHERE " + QuasiId.PRODUCT_ID.getDBName() + "='" + singleTuple + "' OR " +
-			            QuasiId.PRODUCT_ID.getDBName() + "='" + clusterName + "'";
-		}
-		
 		public int testSolution(GeneralizationSteps solution) {
 			int numSolutions = 0;
 			
