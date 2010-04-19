@@ -16,9 +16,7 @@ public class Samarati {
 	
 	// TODO: A lot more work is needed here, work in progress...
 	// 		 This is the method required in the instructions...
-	public static String kanon(int kAnon, int maxSup, QuasiId ... list) {
-		// get the start time...
-    	long startTime = System.currentTimeMillis();
+	public static String[][] kanon(int kAnon, int maxSup, QuasiId ... list) {
 		
 		// Create a Samarati object and initialize the quasi-id(s)
 	    Samarati sam = new Samarati(list);
@@ -54,13 +52,8 @@ public class Samarati {
 		    foundIt = genTable.testSolution(solution, kAnon, maxSup, false);
 	    }
 
-		// get the end time...
-		long endTime = System.currentTimeMillis();
-	    String totalTime = (endTime-startTime)/1000.0 + " seconds";
-
-		// Return a string representation of the generalized data/execution time
-	    String data = Generalizer.getGeneralizedData(solution);
-	    return data + "\n" + totalTime;	
+		// Return a string representation of the generalized data
+	    return Generalizer.getGeneralizedDataArray(solution);	
 	}
 
 	/**

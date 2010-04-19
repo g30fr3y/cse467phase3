@@ -306,15 +306,12 @@ public class Generalizer
         quasiIds = quasiIds.substring( 1 );
 
         String[] data = dbManager.runQuery( "SELECT " + quasiIds + " FROM Student" );
-        String[][] output = new String[(data.length/enabledIds.length)+1][enabledIds.length];
-        
-        for (int i = 0; i < enabledIds.length; i++) {
-        	output[0][i] = enabledIds[i].toString();
-        }
+        String[][] output = new String[(data.length/enabledIds.length)][enabledIds.length];
+
 
         dbManager.closeConnection( false );
 
-        int outputPointer = 1;
+        int outputPointer = 0;
         for ( int i = 0; i < data.length; i += enabledIds.length )
         {
             for ( int j = 0; j < enabledIds.length; j++ )
