@@ -40,28 +40,30 @@ public class Samarati
         // Determine the halfway point in the lattice for all of the QuasiIds
         // and make that the initial solution testing
         int currentLatticeLevel = sam.latticeHeight/2;
+        
+        // Create a solution set
+        int[][] solutionSet = null;
 
         boolean foundIt = false;
+        
+        // TODO: re-structure for binary search
         while (!foundIt)
         {
             // make a GeneralizationSteps object...
             solution = new GeneralizationSteps();
             
-            // Create combination for the solutions
+            // Obtain solution permutations given height and list.length
+            solutionSet = createPossibleSolutions( currentLatticeLevel, list.length );
             
-            
-            
-            
-            // I have no idea what this means
-            // place your guessed solution in an int array...
-            int[] possibleSolution = new int[list.length];
-
-            // set your GeneralizationSteps to have the values you guessed
-            for ( int i = 0; i < list.length; i++ )
+            // Add the solution set to GeneralizationSteps
+            for( int currentSol = 0 ; currentSol < solutionSet.length ; currentSol++)
             {
-                solution.setGenSteps( list[i], possibleSolution[i] );
+                for( int currentQuasi = 0; currentQuasi < list.length ; currentQuasi++)
+                {
+                    solution.setGenSteps( list[currentQuasi], solutionSet[currentSol][currentQuasi] );
+                }
             }
-
+            
             // test the solution...
             // did you find it? wash, rinse, repeat...
             foundIt = genTable.testSolution( solution, kAnon, maxSup, false );
