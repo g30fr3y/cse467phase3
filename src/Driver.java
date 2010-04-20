@@ -8,16 +8,16 @@ public class Driver
 
     public static void main(String[] args)
     {
-        QuasiId id = QuasiId.PRICE;
-        String entry = "98999";
-        String entry2 = "98998";
-        for ( int i = 0; i <= id.maxGeneralization ; i++ )
-        {
-            System.out.print( Generalizer.generalize( entry , id , i ) + "\t");
-            System.out.println( Generalizer.generalize( entry2 , id , i ) );
-        }
-        
-        System.out.print( Generalizer.getNumGeneralization( entry , entry2, id ) );
+//        QuasiId id = QuasiId.EXPIRE_YEAR;
+//        String entry = "2000";
+//        String entry2 = "0";
+//        for ( int i = 0; i <= id.maxGeneralization ; i++ )
+//        {
+//            System.out.print( Generalizer.generalize( entry , id , i ) + "\t");
+//            System.out.println( Generalizer.generalize( entry2 , id , i ) );
+//        }
+//        
+//        System.out.print( Generalizer.getNumGeneralization( entry , entry2, id ) );
         
         // DBManager dbManager = new DBManager("", "test.xls");
         // String[] info = dbManager.getAllTableData();
@@ -26,11 +26,11 @@ public class Driver
         // }
         // dbManager.closeConnection(false);
 
-        // GeneralizationSteps test = new GeneralizationSteps();
-        // test.setGenSteps(QuasiId.DEPT_ID, 10);
-        // test.setGenSteps(QuasiId.PRODUCT_ID, 4);
-        // test.setGenSteps(QuasiId.PRICE, 3);
-        // test.setGenSteps(QuasiId.EXPIRE_YEAR, 2);
+//         GeneralizationSteps test = new GeneralizationSteps();
+//         test.setGenSteps(QuasiId.DEPT_ID, 10);
+//         test.setGenSteps(QuasiId.PRODUCT_ID, 4);
+//         test.setGenSteps(QuasiId.PRICE, 3);
+//         test.setGenSteps(QuasiId.EXPIRE_YEAR, 2);
         //		
         // GeneralizationSteps test0 = new GeneralizationSteps();
         // test0.setGenSteps(QuasiId.DEPT_ID, 10);
@@ -54,15 +54,17 @@ public class Driver
         // System.out.println(test.dominates(test1.getDataPairs())); // true
         // System.out.println(test.dominates(test2.getDataPairs())); // false
 
-         GeneralizationTable table = new
-         GeneralizationTable(QuasiId.DEPT_ID);//, QuasiId.WEIGHT);
-         System.out.println(table);
+//         GeneralizationTable table = new GeneralizationTable(QuasiId.DEPT_ID, QuasiId.WEIGHT);
+//         System.out.println(table);
         // GeneralizationSteps solution = new GeneralizationSteps();
         // solution.setGenSteps(QuasiId.DEPT_ID, 5);
         // solution.setGenSteps(QuasiId.PRODUCT_ID, 5);
         // solution.setGenSteps(QuasiId.WEIGHT, 5);
         // System.out.println(Generalizer.getGeneralizedData(solution));
 
+//        Samarati.kanon( 0, 0, QuasiId.DEPT_ID, QuasiId.PRODUCT_ID );
+        Samarati sam = new Samarati( QuasiId.PRODUCT_ID, QuasiId.PRICE );
+//        System.out.println(sam.latticeHeight);
     }
 
 }
