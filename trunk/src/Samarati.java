@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 /*
  * Here are the general steps to accomplish Samarati's algorithm:
  * 1) Get quasi-identifiers, maximum suppression value, k
@@ -22,7 +24,7 @@ public class Samarati
 
     // TODO: A lot more work is needed here, work in progress...
     // This is the method required in the instructions...
-    public static String[][] kanon(int kAnon, int maxSup, QuasiId... list)
+    public static String[][] kanon(int kAnon, int maxSup, QuasiId ... list)
     {
 
         // Create a Samarati object and initialize the quasi-id(s)
@@ -31,10 +33,9 @@ public class Samarati
         
         // Create a generalization table with the
         // k-anonymity and maximum suppression values.
-        GeneralizationTable genTable;
-        genTable = new GeneralizationTable( list );
+        GeneralizationTable genTable = new GeneralizationTable( list );
+        GeneralizationSteps solution = null;
 
-        GeneralizationSteps solution = new GeneralizationSteps();
         
         // Determine the halfway point in the lattice for all of the QuasiIds
         // and make that the initial solution testing
@@ -45,6 +46,9 @@ public class Samarati
         {
             // make a GeneralizationSteps object...
             solution = new GeneralizationSteps();
+            
+            // Create combination for the solutions
+            
             
             
             
@@ -84,4 +88,74 @@ public class Samarati
         this.latticeHeight = levels + 1;
     }
 
+    public static int[][] createPossibleSolutions( int latticeLocation, int numTerms )
+    {
+        
+        // First determine the number of combinations
+        Vector<int[]> validCombos = new Vector<int[]>();
+        
+        // Create element list
+        int[] elements = new int[latticeLocation + 1]; 
+        for( int i = 0; i <= latticeLocation; i++)
+            elements[i] = i;
+        
+        
+        // Generate combination object
+        CombinationGenerator comboGen = new CombinationGenerator( elements.length, numTerms );
+        
+        // Create combinations
+        while( comboGen.hasMore() )
+        {
+            // Get the indices of the possible combination
+            int[] indices = comboGen.getNext();
+            int cumSum = 0;
+            
+            // Check if the sum of this combination adds up to the height of the lattice
+            for ( int i = 0; i < indices.length ; i++ )
+            {
+                cumSum += elements[indices[i]];
+            }
+            
+            // If the sum of the permutation adds up to the lattice height then we keep it
+            if( cumSum == latticeLocation )
+            {
+                // Add a copy of that array to the list
+                validCombos.add( indices.clone() );
+            }
+        }
+        
+        // Now that we have a list of valid combinations we permute them 
+        Vector<int[]> validPermutations = new Vector<int[]>();
+        
+        // Iterate through the elements in the validCombos
+        for( int i = 0; i < validCombos.size() ; i++)
+        {
+            // The elements are that of the first entry in the vector validCombos
+            int[] comboElements = validCombos.elementAt( i );
+            // Create permutation object
+            PermutationGenerator permGen = new PermutationGenerator( comboElements.length );
+            
+            while( permGen.hasMore() )
+            {
+                int[] indeces = permGen.getNext();
+                
+                // Store the values of the permutation
+                validPermutations.add( new int[indeces.length] );
+                for( int j = 0; j < indeces.length; j++ )
+                {
+                    validPermutations.lastElement()[j] = comboElements[indeces[j]];
+                }
+            }
+            
+        }
+        int[][] solutionSet = new int[validPermutations.size()][];
+        int i = 0;
+        // Convert Vector to an array
+        for( int[] array : validPermutations )
+        {
+            solutionSet[i++] = array.clone();
+        }
+        
+        return solutionSet;
+    }
 }
