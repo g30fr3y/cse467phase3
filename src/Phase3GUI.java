@@ -108,6 +108,7 @@ public class Phase3GUI extends JFrame {
 			// output the data to the table
 			setTableData(data, ids);
 		} catch (Exception e) {
+			e.printStackTrace();  // TODO: remove this before submitting
 			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
 	}
@@ -122,6 +123,7 @@ public class Phase3GUI extends JFrame {
 		String[] columnNames = quasiIds.split(",");
 
 		dataTable = new JTable(data, columnNames);
+		dataTable.setAutoCreateRowSorter(true);
 		dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPane = new JScrollPane(dataTable);
 		this.add(scrollPane);
