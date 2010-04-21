@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,11 +9,13 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -20,7 +23,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
-public class Phase3GUI extends JFrame {
+public class Phase3GUI extends JFrame implements ActionListener {
 	public Phase3GUI() {
 		setTitle("Phase 3 Demo");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -33,6 +36,14 @@ public class Phase3GUI extends JFrame {
 		});
 		setupDatabasePrompt();
 		setup();
+	}
+	
+
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == repeatButton) {
+			newScenarioPrompt();
+		}
+		
 	}
 	
 	public void newScenarioPrompt() {		
@@ -197,10 +208,18 @@ public class Phase3GUI extends JFrame {
 		}		
 	}
 
-	private void setup() {		
+	private void setup() {			
+		JPanel buttonPanel = new JPanel(new FlowLayout());
+		this.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		
+		repeatButton = new JButton("Repeat");
+		buttonPanel.add(repeatButton);
+		repeatButton.setPreferredSize(new Dimension(100, 35));
+		repeatButton.addActionListener(this);
+		
 		timeLabel = new JLabel("ELAPSED TIME: ");
 		timeLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-		this.add(this.timeLabel, BorderLayout.SOUTH);
+		this.getContentPane().add(this.timeLabel, BorderLayout.NORTH);
 		
 		pack();
 		
@@ -211,4 +230,5 @@ public class Phase3GUI extends JFrame {
 	private JScrollPane scrollPane;
 	private DBManager dbManager;
 	private JLabel timeLabel;
+	private JButton repeatButton;
 }
