@@ -22,6 +22,7 @@ public class GeneralizationTable {
 			}
 		}
 		
+		System.out.println("returning true");
 		return true;
 	}
 	
