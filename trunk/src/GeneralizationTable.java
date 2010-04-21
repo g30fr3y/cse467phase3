@@ -169,6 +169,7 @@ public class GeneralizationTable {
 													  "FROM Student " + 
 													  "WHERE " + QuasiId.PRODUCT_ID.getDBName() + 
 													  "='" + singleTupleList[i] + "'");
+		
 			for (int j = 0; j < selectedIds.length; j++) {
 				singleTupleAttributes[i][j] = attributes[j]; 
 			}
@@ -234,7 +235,7 @@ public class GeneralizationTable {
 				}
 			}
 			
-			return numSolutions-1; // one data pair is always zeros, not a valid solution			
+			return numSolutions;		
 		}
 		
 		public String toString() {
