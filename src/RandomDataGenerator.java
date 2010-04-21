@@ -223,7 +223,9 @@ public class RandomDataGenerator
             sheet.addCell( new Number(DEPT_ID, row + 1, ROW_VALUES[row][DEPT_ID]) );
             sheet.addCell( new Number(WEIGHT, row + 1, ROW_VALUES[row][WEIGHT]) );
             sheet.addCell( new Number(PRODUCT_YEAR, row + 1, ROW_VALUES[row][PRODUCT_YEAR]) );
-            sheet.addCell( new Number(EXPIRE_YEAR, row + 1, ROW_VALUES[row][EXPIRE_YEAR]) );
+            // Since the value needs to actually be empty I'll check if the inserted value is 0  and don't insert anything
+            if ( ROW_VALUES[row][EXPIRE_YEAR] != 0 )
+                sheet.addCell( new Number(EXPIRE_YEAR, row + 1, ROW_VALUES[row][EXPIRE_YEAR]) );
         }
     }
     
