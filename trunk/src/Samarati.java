@@ -34,7 +34,7 @@ public class Samarati
         // Create a generalization table with the
         // k-anonymity and maximum suppression values.
         GeneralizationTable genTable = new GeneralizationTable( list );
-        GeneralizationSteps solution = null;
+        GeneralizationSteps solution = new GeneralizationSteps();
 
         
         // Determine the halfway point in the lattice for all of the QuasiIds
@@ -53,23 +53,35 @@ public class Samarati
         // Doing BinarySearch
         while (isBinarySearch)
         {
-            // Start doing the algorithm at least once
-            // make a GeneralizationSteps object...
-            solution = new GeneralizationSteps();
-            
             // Obtain solution permutations given height and list.length
             solutionSet = createPossibleSolutions( currentLatticeLevel, list.length );
             
-            // Add the solution set to GeneralizationSteps
+            // Iterate through all solutions
             for( int currentSol = 0 ; currentSol < solutionSet.length ; currentSol++)
             {
+                // Add the solution set to GeneralizationSteps
                 for( int currentQuasi = 0; currentQuasi < list.length ; currentQuasi++)
                 {
                     solution.setGenSteps( list[currentQuasi], solutionSet[currentSol][currentQuasi] );
                 }
+                
+                // Check if it is true
+                isSolution = genTable.testSolution( solution, kAnon, maxSup, false );
+                // If we found a solution stop looking in this lattice level
+                if ( isSolution )
+                {
+                    printSolution( solutionSet[currentSol] );
+                    break;
+                }
+                else
+                {
+                    // Continue searching
+                    // I'm assuming that soultion.setGenSteps will overwrite and now accumulate but let's not take our chances
+                    solution = new GeneralizationSteps();
+                }
+                
             }
             
-            isSolution = genTable.testSolution( solution, kAnon, maxSup, false );
             
             // did you find it? wash, rinse, repeat...
             // Adjust variables according to results
@@ -96,6 +108,13 @@ public class Samarati
         return Generalizer.getGeneralizedDataArray( solution );
     }
 
+    private static void printSolution( int[] solutionSet )
+    {
+        for( int i = 0 ; i < solutionSet.length; i++ )
+            System.out.print( solutionSet[i] + " " );
+        System.out.println();
+    }
+    
     /**
      * The lattice isn't needed, but we still need to know the number of levels
      * (or height) of the lattice. This method uses a simple algorithm to
