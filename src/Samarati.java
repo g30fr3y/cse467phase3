@@ -113,7 +113,7 @@ public class Samarati
         this.latticeHeight = levels + 1;
     }
 
-    public static int[][] createPossibleSolutions( int latticeLocation, int numTerms )
+    private static int[][] createPossibleSolutions( int latticeLocation, int numTerms )
     {
         
         // First determine the number of combinations
