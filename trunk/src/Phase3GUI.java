@@ -185,7 +185,6 @@ public class Phase3GUI extends JFrame {
 		File file = fc.getSelectedFile();
 		switch(choice) {
 			case JFileChooser.APPROVE_OPTION:
-				System.out.println(file.toString());
 				dbManager = new DBManager(file.toString());
 				break;
 			case JFileChooser.CANCEL_OPTION:
