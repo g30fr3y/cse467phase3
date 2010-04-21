@@ -50,7 +50,14 @@ public class DBDataParser
                 for( int j = 0; j < sheet.getColumns() ; j++ )
                 {
                     // Store Values into the row buffer
-                    rowBuffer[j] = sheet.getCell(j,i).getContents(); 
+                    rowBuffer[j] = sheet.getCell(j,i).getContents();
+                    
+                    // if the expire year is an empty cell, we need to add 
+                    // some kind of marker to ensure harmony with the rest of
+                    // the code.
+                    if (rowBuffer[j].isEmpty()) {
+                    	rowBuffer[j] = "****";
+                    }
                 }
                 
                 // Add a batch job for the connection
