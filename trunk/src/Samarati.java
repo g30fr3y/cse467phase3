@@ -44,11 +44,16 @@ public class Samarati
         // Create a solution set
         int[][] solutionSet = null;
 
-        boolean foundIt = false;
+        // Binary Search 
+        boolean isBinarySearch = true;
+        boolean isSolution = false;
+        int maxHeight = sam.latticeHeight;
+        int lowestHeight = 0;
         
-        // TODO: re-structure for binary search
-        while (!foundIt)
+        // Doing BinarySearch
+        while (isBinarySearch)
         {
+            // Start doing the algorithm at least once
             // make a GeneralizationSteps object...
             solution = new GeneralizationSteps();
             
@@ -64,9 +69,27 @@ public class Samarati
                 }
             }
             
-            // test the solution...
+            isSolution = genTable.testSolution( solution, kAnon, maxSup, false );
+            
             // did you find it? wash, rinse, repeat...
-            foundIt = genTable.testSolution( solution, kAnon, maxSup, false );
+            // Adjust variables according to results
+            if( isSolution )
+            {
+                // Go down the lattice
+                maxHeight = currentLatticeLevel;
+                currentLatticeLevel = currentLatticeLevel - (maxHeight - lowestHeight)/2 ;
+                
+            }
+            else
+            {
+                // Go up the lattice
+                lowestHeight = currentLatticeLevel;
+                currentLatticeLevel = (maxHeight - lowestHeight)/2 + currentLatticeLevel;
+            }
+            
+            // We found the solution :D
+            if( currentLatticeLevel == maxHeight || currentLatticeLevel == lowestHeight )
+                isBinarySearch = false;
         }
 
         // Return a string representation of the generalized data
