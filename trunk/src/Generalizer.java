@@ -209,7 +209,7 @@ public class Generalizer
 
         // Check the case of the empty year and set empty year with a workable
         // string
-        if (year.length() == EMPTY)
+        if ( year.isEmpty() )
             year = EMPTY_YEAR;
 
         // Perform the generalizations specified
@@ -274,6 +274,8 @@ public class Generalizer
         {
             quasiIds += "," + id.getDBName();
         }
+        
+        // TODO: Something goes boom here
         quasiIds = quasiIds.substring( 1 );
 
         String[] data = dbManager.runQuery( "SELECT " + quasiIds + " FROM Student" );
@@ -307,7 +309,7 @@ public class Generalizer
 
         String[] data = dbManager.runQuery( "SELECT " + quasiIds + " FROM Student" );
         String[][] output = new String[(data.length/enabledIds.length)][enabledIds.length];
-
+        
 
         dbManager.closeConnection( false );
 
