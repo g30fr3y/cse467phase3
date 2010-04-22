@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.table.TableColumn;
 
 public class Phase3GUI extends JFrame implements ActionListener {
 	public Phase3GUI() {
@@ -135,7 +136,20 @@ public class Phase3GUI extends JFrame implements ActionListener {
 
 		dataTable = new JTable(data, columnNames);
 		dataTable.setAutoCreateRowSorter(true);
+		
 		dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		TableColumn column = null;
+		for (int i = 0; i < list.length; i++) {
+		    column = dataTable.getColumnModel().getColumn(i);
+		    column.setPreferredWidth(110);
+		}
+
+		try {
+			this.getContentPane().remove(scrollPane);
+		} catch (Exception e) {
+//			e.printStackTrace();
+		}
+		this.getContentPane().validate();
 		scrollPane = new JScrollPane(dataTable);
 		this.add(scrollPane);
 	}
