@@ -4,14 +4,17 @@ public class Driver
     public static void main(String[] args)
     {
         DBManager dbManager = new DBManager("", "emptyTest.xls");
-        
-        int kAnon = 1;
-        int maxSup = 1;
-//        QuasiId[] list = {QuasiId.PRODUCT_ID,QuasiId.PRICE, QuasiId.PRODUCT_YEAR, QuasiId.EXPIRE_YEAR,};
-        QuasiId[] list = {QuasiId.EXPIRE_YEAR};
-        // Call Samarati's and display the output
-        String[][] output = Samarati.kanon( kAnon, maxSup, list ) ;
-        
+        Samarati sam = new Samarati( QuasiId.PRODUCT_ID );
+//        System.out.println( Generalizer.generalizeYear( "", 3, QuasiId.EXPIRE_YEAR ) );
+        int kAnon = 3;
+        int maxSup = 3;
+////        QuasiId[] list = {QuasiId.PRODUCT_ID,QuasiId.PRICE, QuasiId.PRODUCT_YEAR, QuasiId.EXPIRE_YEAR,};
+//        QuasiId[] list = {QuasiId.PRODUCT_ID, QuasiId.EXPIRE_YEAR};
+//        // Call Samarati's and display the output
+        String[][] output = Samarati.kanon( kAnon, maxSup, QuasiId.PRODUCT_ID ) ;
+//        
+//        
+//        System.out.println(" " + 1/2);
         int i = 0;
         for( String[] row : output )
         {

@@ -49,10 +49,14 @@ public class Samarati
         boolean isSolution = false;
         int maxHeight = sam.latticeHeight;
         int lowestHeight = 0;
+        int heightBuffer = -1;
         
         // Doing BinarySearch
         while (isBinarySearch)
         {
+            // Did we find a solution?
+            if( currentLatticeLevel == maxHeight || currentLatticeLevel == lowestHeight )
+                isBinarySearch = false;
             // Obtain solution permutations given height and list.length
             solutionSet = createPossibleSolutions( currentLatticeLevel, list.length );
             
@@ -70,16 +74,11 @@ public class Samarati
                 // If we found a solution stop looking in this lattice level
                 if ( isSolution )
                 {
-                    printSolution( solutionSet[currentSol] );
+//                    printSolution( solutionSet[currentSol] );
                     break;
                 }
-                else
-                {
-                    // Continue searching
-                    // I'm assuming that soultion.setGenSteps will overwrite and now accumulate but let's not take our chances
-                    solution = new GeneralizationSteps();
-                }
-                
+//                else
+//                    solution = new GeneralizationSteps();
             }
             
             
@@ -89,19 +88,17 @@ public class Samarati
             {
                 // Go down the lattice
                 maxHeight = currentLatticeLevel;
-                currentLatticeLevel = currentLatticeLevel - (maxHeight - lowestHeight)/2 ;
-                
+                heightBuffer = (int)Math.ceil( (maxHeight - lowestHeight)/2.0 );
+                currentLatticeLevel = currentLatticeLevel - heightBuffer ;
             }
             else
             {
                 // Go up the lattice
-                lowestHeight = currentLatticeLevel;
+                heightBuffer = currentLatticeLevel;
                 currentLatticeLevel = (maxHeight - lowestHeight)/2 + currentLatticeLevel;
+                lowestHeight = heightBuffer;
             }
             
-            // We found the solution :D
-            if( currentLatticeLevel == maxHeight || currentLatticeLevel == lowestHeight )
-                isBinarySearch = false;
         }
 
         // Return a string representation of the generalized data
