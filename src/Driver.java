@@ -6,9 +6,9 @@ public class Driver
         DBManager dbManager = new DBManager("", "emptyTest.xls");
         
         
-        QuasiId[] id = {QuasiId.WEIGHT};
-        int kAnon = 2;
-        int maxSup = 0;
+        QuasiId[] id = {QuasiId.PRODUCT_ID};
+        int kAnon = 5;
+        int maxSup = 1;
         
         
         /* This tests individual commands
