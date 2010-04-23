@@ -4,18 +4,30 @@ public class Driver
     public static void main(String[] args)
     {
         DBManager dbManager = new DBManager("", "emptyTest.xls");
-        Samarati sam = new Samarati( QuasiId.PRODUCT_ID );
-//        System.out.println( Generalizer.generalizeYear( "", 3, QuasiId.EXPIRE_YEAR ) );
-        int kAnon = 3;
-        int maxSup = 3;
-////        QuasiId[] list = {QuasiId.PRODUCT_ID,QuasiId.PRICE, QuasiId.PRODUCT_YEAR, QuasiId.EXPIRE_YEAR,};
-//        QuasiId[] list = {QuasiId.PRODUCT_ID, QuasiId.EXPIRE_YEAR};
+        
+        
+        QuasiId[] id = {QuasiId.WEIGHT};
+        int kAnon = 2;
+        int maxSup = 0;
+        
+        
+        /* This tests individual commands
+
+        GeneralizationTable genTable = new GeneralizationTable( id );
+        GeneralizationSteps solution = new GeneralizationSteps();
+        solution.setGenSteps( id[0], 3 );
+        boolean isSol = genTable.testSolution( solution, kAnon, maxSup, false );
+        solution.setGenSteps( id[0], 0 );
+        isSol = genTable.testSolution( solution, kAnon, maxSup, false );
+        String[][] output = Generalizer.getGeneralizedDataArray( solution );
+        
+        System.out.println(isSol);
+         */
+        
+        
 //        // Call Samarati's and display the output
-        String[][] output = Samarati.kanon( kAnon, maxSup, QuasiId.PRODUCT_ID ) ;
-//        
-//        
-//        System.out.println(" " + 1/2);
-        int i = 0;
+        String[][] output = Samarati.kanon( kAnon, maxSup, id) ;
+        
         for( String[] row : output )
         {
             for( int k = 0; k < row.length ; k++)
@@ -24,6 +36,5 @@ public class Driver
         }
         
         dbManager.closeConnection( false );
-        
     }
 }

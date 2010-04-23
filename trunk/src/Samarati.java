@@ -34,12 +34,10 @@ public class Samarati
         // Create a generalization table with the
         // k-anonymity and maximum suppression values.
         GeneralizationTable genTable = new GeneralizationTable( list );
-        GeneralizationSteps solution = new GeneralizationSteps();
-
+        GeneralizationSteps currentSolution = null;
+        GeneralizationSteps bestSolution = null;
         
-        // Determine the halfway point in the lattice for all of the QuasiIds
-        // and make that the initial solution testing
-        int currentLatticeLevel = sam.latticeHeight/2;
+
         
         // Create a solution set
         int[][] solutionSet = null;
@@ -47,62 +45,59 @@ public class Samarati
         // Binary Search 
         boolean isBinarySearch = true;
         boolean isSolution = false;
+        int currentLatticeLevel = 0;
         int maxHeight = sam.latticeHeight;
         int lowestHeight = 0;
         int heightBuffer = -1;
         
         // Doing BinarySearch
-        while (isBinarySearch)
+        while (lowestHeight < maxHeight)
         {
-            // Did we find a solution?
-            if( currentLatticeLevel == maxHeight || currentLatticeLevel == lowestHeight )
-                isBinarySearch = false;
+            // Allocate new memory for the current solution
+            currentSolution = new GeneralizationSteps();
+            
+            // Set the middle point
+            currentLatticeLevel = lowestHeight + (maxHeight - lowestHeight) / 2;
+
+            // Calculate the solution
+
             // Obtain solution permutations given height and list.length
             solutionSet = createPossibleSolutions( currentLatticeLevel, list.length );
-            
+
             // Iterate through all solutions
-            for( int currentSol = 0 ; currentSol < solutionSet.length ; currentSol++)
+            for ( int currentSol = 0; currentSol < solutionSet.length; currentSol++ )
             {
                 // Add the solution set to GeneralizationSteps
-                for( int currentQuasi = 0; currentQuasi < list.length ; currentQuasi++)
+                for ( int currentQuasi = 0; currentQuasi < list.length; currentQuasi++ )
                 {
-                    solution.setGenSteps( list[currentQuasi], solutionSet[currentSol][currentQuasi] );
+                    currentSolution.setGenSteps( list[currentQuasi], solutionSet[currentSol][currentQuasi] );
                 }
-                
+
                 // Check if it is true
-                isSolution = genTable.testSolution( solution, kAnon, maxSup, false );
+                isSolution = genTable.testSolution( currentSolution, kAnon, maxSup, false );
+                
                 // If we found a solution stop looking in this lattice level
-                if ( isSolution )
+                if (isSolution)
                 {
-//                    printSolution( solutionSet[currentSol] );
+                    // Copy the current solution as the best solution
+                    bestSolution = currentSolution;
                     break;
                 }
-//                else
-//                    solution = new GeneralizationSteps();
             }
-            
-            
-            // did you find it? wash, rinse, repeat...
-            // Adjust variables according to results
-            if( isSolution )
+
+            // If we have a solution, look below the lattice
+            if (isSolution)
             {
-                // Go down the lattice
                 maxHeight = currentLatticeLevel;
-                heightBuffer = (int)Math.ceil( (maxHeight - lowestHeight)/2.0 );
-                currentLatticeLevel = currentLatticeLevel - heightBuffer ;
             }
+            // Otherwise looking in the bottom half of the lattice
             else
             {
-                // Go up the lattice
-                heightBuffer = currentLatticeLevel;
-                currentLatticeLevel = (maxHeight - lowestHeight)/2 + currentLatticeLevel;
-                lowestHeight = heightBuffer;
+                lowestHeight = currentLatticeLevel + 1;
             }
-            
-        }
 
-        // Return a string representation of the generalized data
-        return Generalizer.getGeneralizedDataArray( solution );
+        }
+        return Generalizer.getGeneralizedDataArray( bestSolution );
     }
 
     private static void printSolution( int[] solutionSet )
@@ -140,7 +135,7 @@ public class Samarati
         for( int i = 0; i <= latticeLocation; i++)
             elements[i] = i;
         
-        
+        // TODO: Need a special way to handle 0??
         // Generate combination object
         CombinationGenerator comboGen = new CombinationGenerator( elements.length, numTerms );
         
