@@ -149,10 +149,17 @@ public class Samarati
         // First determine the number of combinations
         Vector<int[]> validCombos = new Vector<int[]>();
 
+        // TODO: Fix this!!
         // Create element list
-        int[] elements = new int[latticeLocation + 1];
-        for ( int i = 0; i <= latticeLocation; i++ )
-            elements[i] = i;
+        int[] elements = new int[(latticeLocation + 1) * numTerms];
+        
+        // Add a set of 0-n numbers to the array, one for every quasi-id
+        int k = 0;
+        for( int j = 0; j < numTerms; j++ )
+        {
+            for ( int i = 0 ; i <= latticeLocation; i++, k++ )
+                elements[k] = i;
+        }
 
         // Generate combination object
         CombinationGenerator comboGen = new CombinationGenerator( elements.length, numTerms );
