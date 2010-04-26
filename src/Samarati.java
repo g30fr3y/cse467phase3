@@ -184,35 +184,11 @@ public class Samarati
                 validCombos.add( indices.clone() );
             }
         }
-
-        // Now that we have a list of valid combinations we permute them
-        Vector<int[]> validPermutations = new Vector<int[]>();
-
-        // Iterate through the elements in the validCombos
-        for ( int i = 0; i < validCombos.size(); i++ )
-        {
-            // The elements are that of the first entry in the vector validCombos
-            int[] comboElements = validCombos.elementAt( i );
-            // Create permutation object
-            PermutationGenerator permGen = new PermutationGenerator( comboElements.length );
-
-            while (permGen.hasMore())
-            {
-                int[] indeces = permGen.getNext();
-
-                // Store the values of the permutation
-                validPermutations.add( new int[indeces.length] );
-                for ( int j = 0; j < indeces.length; j++ )
-                {
-                    validPermutations.lastElement()[j] = comboElements[indeces[j]];
-                }
-            }
-
-        }
-        int[][] solutionSet = new int[validPermutations.size()][];
+        
+        int[][] solutionSet = new int[validCombos.size()][];
         int i = 0;
         // Convert Vector to an array
-        for ( int[] array : validPermutations )
+        for ( int[] array : validCombos )
         {
             solutionSet[i++] = array.clone();
         }
