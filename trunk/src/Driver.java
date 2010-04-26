@@ -3,11 +3,13 @@ public class Driver
 {
     public static void main(String[] args)
     {
+        long executionTime = System.currentTimeMillis();
         DBManager dbManager = new DBManager("", "emptyTest.xls");
         
         
-        QuasiId[] id = {QuasiId.PRODUCT_ID};
-        int kAnon = 5;
+//        QuasiId[] id = {QuasiId.DEPT_ID,QuasiId.WEIGHT,QuasiId.PRODUCT_ID, QuasiId.EXPIRE_YEAR};
+        QuasiId[] id = {QuasiId.DEPT_ID,QuasiId.PRODUCT_ID};
+        int kAnon = 1;
         int maxSup = 1;
         
         
@@ -36,5 +38,23 @@ public class Driver
         }
         
         dbManager.closeConnection( false );
+        executionTime = System.currentTimeMillis() - executionTime; 
+        System.out.println(executionTime);
+//        String[] elements = { "0", "1", "2" , "0", "1", "2", "0", "1", "2"};
+//        int[] indices;
+//        CombinationGenerator x = new CombinationGenerator( elements.length, 3 );
+//        StringBuffer combination;
+//        while (x.hasMore())
+//        {
+//            combination = new StringBuffer();
+//            indices = x.getNext();
+//            for ( int i = 0; i < indices.length; i++ )
+//            {
+//                combination.append( elements[indices[i]] );
+//            }
+//            System.out.println( combination.toString() );
+//        }
+
+        
     }
 }
