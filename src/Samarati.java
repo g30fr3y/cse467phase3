@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Vector;
 
 /*
@@ -149,7 +152,6 @@ public class Samarati
         // First determine the number of combinations
         Vector<int[]> validCombos = new Vector<int[]>();
 
-        // TODO: Fix this!!
         // Create element list
         int[] elements = new int[(latticeLocation + 1) * numTerms];
         
@@ -181,9 +183,19 @@ public class Samarati
             if (cumSum == latticeLocation)
             {
                 // Add a copy of that array to the list
-                validCombos.add( indices.clone() );
+                validCombos.add(new int[indices.length]);
+                for ( int j = 0; j < indices.length; j++ )
+                {
+                    validCombos.lastElement()[j] = elements[indices[j]];
+                }
+//                validCombos.add( indices.clone() );
+                
             }
         }
+        
+        // Delete duplicates, I think this is less costly than testing dupes
+        validCombos = removeDuplicates( validCombos );
+        
         
         int[][] solutionSet = new int[validCombos.size()][];
         int i = 0;
@@ -194,5 +206,20 @@ public class Samarati
         }
 
         return solutionSet;
+    }
+    
+    private static Vector<int[]> removeDuplicates( Vector<int[]> vector)
+    {
+        for ( int i = 0; i < vector.size(); i++ )
+        {
+            for ( int j = 0; j < vector.size() ; j++ )
+            {
+                if( (i != j) && Arrays.equals( vector.elementAt( i ),vector.elementAt( j ) ) )
+                {
+                    vector.remove( j-- );
+                }
+            }
+        }
+        return vector;
     }
 }

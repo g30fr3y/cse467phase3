@@ -275,7 +275,6 @@ public class Generalizer
             quasiIds += "," + id.getDBName();
         }
         
-        // TODO: Something goes boom here
         quasiIds = quasiIds.substring( 1 );
 
         String[] data = dbManager.runQuery( "SELECT " + quasiIds + " FROM Student" );
