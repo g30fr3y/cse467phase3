@@ -52,12 +52,13 @@ public class DBDataParser
                     // Store Values into the row buffer
                     rowBuffer[j] = sheet.getCell(j,i).getContents();
                     
-                    // if the expire year is an empty cell, we need to add 
-                    // some kind of marker to ensure harmony with the rest of
-                    // the code.
-                    if (rowBuffer[j].isEmpty()) {
-                    	rowBuffer[j] = "****";
-                    }
+                }
+                // if the expire year is an empty cell, we need to add 
+                // some kind of marker to ensure harmony with the rest of
+                // the code.
+                if (rowBuffer[EXPIRE_YEAR].isEmpty()) 
+                {
+                    rowBuffer[EXPIRE_YEAR] = "****";
                 }
                 
                 // Add a batch job for the connection
