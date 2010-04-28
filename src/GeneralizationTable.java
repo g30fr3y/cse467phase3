@@ -8,7 +8,7 @@ public class GeneralizationTable {
 		
 		// set up the table if k anon is greater than 1,
 		// otherwise if k is 1, then we're just returning 
-		// all data untouched (or ungeneralized)
+		// all data untouched (or ungeneralized)		
 		if (this.kAnon > 1) {
 			setClusterList();
 			setKTupleList();
@@ -29,6 +29,8 @@ public class GeneralizationTable {
 		this.kTupleAttributes = null;
 		this.kAnon = 0;
 		this.kTupleListIsEmpty = true;
+		this.kTupleListSizes = null;
+		this.clusterListSizes = null;
 	}
 
 	public boolean testSolution(GeneralizationSteps solution, int maxSuppression) {
@@ -40,11 +42,35 @@ public class GeneralizationTable {
 					suppressionCount++;
 					if (suppressionCount > maxSuppression) {
 						return false; // we hit the suppression limit, stop checking solution
+					} 
+					
+					// If the remaining rows to check are less than the suppression
+					// limit, there's no need to check them...
+					int suppressionAvailable = maxSuppression-suppressionCount;
+					int remainingRows = genTable.length-i;
+					if (suppressionAvailable >= remainingRows) {
+						return true;
 					}
 				}
 			}	
 		}
 		return true;
+	}
+	
+	public String getSuppressedProductIds(GeneralizationSteps solution) {
+		String output = "";
+		 
+		if ( !kTupleListIsEmpty && (this.kAnon > 1) ) {	
+			for (int i = 0; i < kTupleList.length; i++) {
+				int numHits = genTable[i].testSolution(solution, i);
+				if (numHits < kAnon) {
+					// This tuple must be suppressed.  Add it to output
+					output += kTupleList[i] + ",";
+				}
+			}	
+		}
+		
+		return output;
 	}
 	
 	public String toString() {
@@ -146,6 +172,7 @@ public class GeneralizationTable {
 		dbManager.closeConnection(false);	
 		
 		this.clusterList = clusters.split(";");
+		this.setClusterListSizes();
 	}
 	
 	private String getQuasiIdValuePairs(String[] values) {
@@ -178,6 +205,7 @@ public class GeneralizationTable {
 			kTupleListIsEmpty = true;
 		} else {
 			kTupleList = kTuples.split(";");
+			this.setKTupleListSizes();
 			kTupleListIsEmpty = false;			
 		}
 	}
@@ -226,13 +254,29 @@ public class GeneralizationTable {
 		
 		dbManager.closeConnection(false);
 	}
+	
+	private void setClusterListSizes() {
+		clusterListSizes = new int[clusterList.length];
+		for (int i = 0; i < clusterList.length; i++) {
+			clusterListSizes[i] = clusterList[i].split(",").length;
+		}
+	}
+	
+	private void setKTupleListSizes() {
+		kTupleListSizes = new int[kTupleList.length];
+		for (int i = 0; i < kTupleList.length; i++) {
+			kTupleListSizes[i] = kTupleList[i].split(",").length;
+		}
+	}
 
 	private String[] clusterList;
+	private int[] clusterListSizes;
+	private String[][] clusterListAttributes;
 	private String[] kTupleList;
+	private int[] kTupleListSizes;
+	private String[][] kTupleAttributes;
 	private QuasiId[] selectedIds;
 	private GeneralizationRow[] genTable;
-	private String[][] clusterListAttributes;
-	private String[][] kTupleAttributes;
 	private int kAnon;
 	private boolean kTupleListIsEmpty;
 	
@@ -242,34 +286,47 @@ public class GeneralizationTable {
 		
 		public GeneralizationRow(int singleTupleIndex) {
 			genStepsRow = new GeneralizationSteps[clusterList.length];
-			setGeneralizationStepsRow(singleTupleIndex);
 		}
 		
-		private void setGeneralizationStepsRow(int kTupleIndex) {
-			String singleTuple = kTupleList[kTupleIndex];
-			for (int i = 0; i < clusterList.length; i++) {
-				genStepsRow[i] = new GeneralizationSteps();
+		private void setup(int kTupleIndex, int genStepIndex) {
+			String kTuple = kTupleList[kTupleIndex];
+			genStepsRow[genStepIndex] = new GeneralizationSteps();
+			if (kTuple.equals(clusterList[genStepIndex])) {
+				int steps = 0;
+				for (int j = 0; j < selectedIds.length; j++) {
+					genStepsRow[genStepIndex].setGenSteps(selectedIds[j], steps);
+				}
+			} else {
 				for (int j = 0; j < selectedIds.length; j++) {
 					int steps = 0;
-					if (singleTuple.equals(clusterList[i])) {
-						steps = 0;
-					} else {
-						String attribute1 = kTupleAttributes[kTupleIndex][j];
-						String attribute2 = clusterListAttributes[i][j];
-						steps = Generalizer.getNumGeneralization(attribute1, attribute2, selectedIds[j]);
-					}
-					genStepsRow[i].setGenSteps(selectedIds[j], steps);
-				}				
-			}
+					String attribute1 = kTupleAttributes[kTupleIndex][j];
+					String attribute2 = clusterListAttributes[genStepIndex][j];
+					steps = Generalizer.getNumGeneralization(attribute1, attribute2, selectedIds[j]);
+					genStepsRow[genStepIndex].setGenSteps(selectedIds[j], steps);
+				}					
+			}			
 		}
 		
 		public int testSolution(GeneralizationSteps solution, int kTuplePosition) {
 			int numSolutions = 0;
 			
 			for (int i = 0; i < genStepsRow.length; i++) {
+				
+				if (genStepsRow[i] == null) {
+					setup(kTuplePosition, i);
+				}
+				
+				
 				if (solution.dominates(genStepsRow[i].getAllInfoLossLevels())) {
-					numSolutions += clusterList[i].split(",").length;	// cluster could be more than one
-					numSolutions += kTupleList[kTuplePosition].split(",").length;
+					numSolutions += clusterListSizes[i];	// cluster could be more than one
+					numSolutions += kTupleListSizes[kTuplePosition];
+				}
+				
+				// If the number of solutions found is greater than or equal
+				// to the desired k anon, stop testing solutions, we're good
+				// to go.
+				if (numSolutions >= kAnon) {
+					i = genStepsRow.length;
 				}
 			}
 			
@@ -278,8 +335,12 @@ public class GeneralizationTable {
 		
 		public String toString() {
 			String output = "";
-			for (GeneralizationSteps gs : genStepsRow) {
-				output += gs.toString() + "\t";
+			for (int i = 0; i < genStepsRow.length; i++) {
+				if (genStepsRow[i] == null) {
+					output += "[null]\t";
+				} else {
+					output += genStepsRow[i].toString() + "\t";					
+				}
 			}
 			return output;
 		}

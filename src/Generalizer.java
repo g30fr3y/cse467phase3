@@ -294,7 +294,8 @@ public class Generalizer
         return output;
     }
 
-    public static String[][] getGeneralizedDataArray(GeneralizationSteps solution)
+    public static String[][] getGeneralizedDataArray(GeneralizationSteps solution, 
+    												 String suppressedProductIds)
     {
         DBManager dbManager = new DBManager();
         QuasiId[] enabledIds = solution.getEnabledQuasiIds();
