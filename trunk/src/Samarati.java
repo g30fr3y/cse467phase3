@@ -46,7 +46,7 @@ public class Samarati
     		for (QuasiId id : list) {
     			simpleSolution.setGenSteps(id, 0);
     		}
-    		return Generalizer.getGeneralizedDataArray( simpleSolution );
+    		return Generalizer.getGeneralizedDataArray( simpleSolution , "");
     	}
 
         // Create a Samarati object and initialize the quasi-id(s)
@@ -117,7 +117,7 @@ public class Samarati
         }
 
         // Returns a string with the solution
-        return Generalizer.getGeneralizedDataArray( bestSolution );
+        return Generalizer.getGeneralizedDataArray( bestSolution,  genTable.getSuppressedProductIds(bestSolution));
     }
 
     private static void printSolution(int[] solutionSet)
