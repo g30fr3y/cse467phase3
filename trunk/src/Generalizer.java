@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 /**
  * Generalizes attributes of a single row or a cluster
  */
@@ -295,36 +297,68 @@ public class Generalizer
     }
 
     public static String[][] getGeneralizedDataArray(GeneralizationSteps solution, 
-    												 String suppressedProductIds)
+    												 String[] getAttributesToGeneralize)
     {
-        DBManager dbManager = new DBManager();
         QuasiId[] enabledIds = solution.getEnabledQuasiIds();
-
+        
         String quasiIds = "";
         for ( QuasiId id : enabledIds )
         {
             quasiIds += "," + id.getDBName();
         }
         quasiIds = quasiIds.substring( 1 );
-
-        String[] data = dbManager.runQuery( "SELECT " + quasiIds + " FROM Student" );
-        String[][] output = new String[(data.length/enabledIds.length)][enabledIds.length];
         
-
-        dbManager.closeConnection( false );
-
-        int outputPointer = 0;
-        for ( int i = 0; i < data.length; i += enabledIds.length )
-        {
-            for ( int j = 0; j < enabledIds.length; j++ )
-            {
-                String generalizedAttribute = generalize( data[i + j], enabledIds[j], solution
-                        .getGenStepValue( enabledIds[j] ) );
-                output[outputPointer][j] = generalizedAttribute;
+    	// If getAttributesToGeneralize is null, just return all data
+    	if (getAttributesToGeneralize == null) {
+          DBManager dbManager = new DBManager();
+  
+          String[] data = dbManager.runQuery( "SELECT " + quasiIds + " FROM Student" );
+          String[][] output = new String[(data.length/enabledIds.length)][enabledIds.length];
+          
+  
+          dbManager.closeConnection( false );
+  
+          int outputPointer = 0;
+          for ( int i = 0; i < data.length; i += enabledIds.length )
+          {
+              for ( int j = 0; j < enabledIds.length; j++ )
+              {
+                  output[outputPointer][j] = data[i + j];
+              }
+              outputPointer++;
+          }
+          return output;
+    		
+    	} else {   
+            
+            Vector<String[]> generalizedData = new Vector<String[]>();
+            
+            for (int i = 0; i < getAttributesToGeneralize.length; i++) {
+            	String[] temp1 = getAttributesToGeneralize[i].split(",");
+            	String[] temp2 = new String[temp1.length-1];
+            	int repeats = Integer.parseInt(temp1[0]);
+                for ( int j = 0; j < enabledIds.length; j++ ) {
+                    String generalizedAttribute = generalize( temp1[j+1], enabledIds[j], 
+                    											solution.getGenStepValue( enabledIds[j] ) );
+                    temp2[j] = generalizedAttribute;
+                }
+                for (int k = 0; k < repeats; k++) {
+                	generalizedData.add(new String[enabledIds.length]);
+                    for (int l = 0; l < enabledIds.length; l++) {
+                    	generalizedData.get(generalizedData.size()-1)[l] = temp2[l];
+                    }
+                }
             }
-            outputPointer++;
-        }
-        return output;
+            
+            String[][] output = new String[generalizedData.size()][enabledIds.length];
+            for (int i = 0; i < generalizedData.size(); i++) {
+            	for (int j = 0; j < enabledIds.length; j++) {
+            		output[i][j] = generalizedData.get(i)[j];
+            	}
+            }
+            
+            return output;
+    	}
     }
 
 }
