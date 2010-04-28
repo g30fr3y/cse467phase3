@@ -43,7 +43,7 @@ public class Samarati
         Samarati sam = new Samarati( list );
 
         // Create a generalization table with the k-anonymity and maximum suppression values.
-        GeneralizationTable genTable = new GeneralizationTable( list );
+        GeneralizationTable genTable = new GeneralizationTable( kAnon, list );
 
         // These will hold the best and current solution
         GeneralizationSteps bestSolution = null;
@@ -82,7 +82,7 @@ public class Samarati
                 }
 
                 // Check if it is true
-                isSolution = genTable.testSolution( currentSolution, kAnon, maxSup, false );
+                isSolution = genTable.testSolution( currentSolution, maxSup );
 
                 // If we found a solution stop looking in this lattice level
                 if (isSolution)

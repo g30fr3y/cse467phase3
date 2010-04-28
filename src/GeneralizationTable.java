@@ -1,57 +1,76 @@
 
 public class GeneralizationTable {
 	
-	public GeneralizationTable(QuasiId ... list) {
+	public GeneralizationTable(int kAnon, QuasiId ... list) {
+		this();
 		selectedIds = list;
+		this.kAnon = kAnon;
 		setClusterList();
-		setSingleTupleList();
-		setAttributeLists();
-		fillGenTable();
+		setKTupleList();
+		
+		if ( !kTupleListIsEmpty ) {
+			setAttributeLists();
+			fillGenTable();			
+		}
 	}
 	
-	public boolean testSolution(GeneralizationSteps solution, int kAnonymity,
-								int maxSuppression, boolean getTableData) {
+	private GeneralizationTable() {
+		this.clusterList = null;
+		this.kTupleList = null;
+		this.selectedIds = null;
+		this.genTable = null;
+		this.clusterListAttributes = null;
+		this.kTupleAttributes = null;
+		this.kAnon = 0;
+		this.kTupleListIsEmpty = true;
+	}
+
+	public boolean testSolution(GeneralizationSteps solution, int maxSuppression) {
 		int suppressionCount = 0;
-		for (GeneralizationRow gr : genTable) {
-			int numHits = gr.testSolution(solution);
-			if (numHits < kAnonymity) {
-				suppressionCount++;
-				if (suppressionCount > maxSuppression) {
-					return false; // we hit the suppression limit, stop checking solution
+		if ( !kTupleListIsEmpty ) {	
+			for (int i = 0; i < kTupleList.length; i++) {
+				int numHits = genTable[i].testSolution(solution, i);
+				if (numHits < kAnon) {
+					suppressionCount++;
+					if (suppressionCount > maxSuppression) {
+						return false; // we hit the suppression limit, stop checking solution
+					}
 				}
-			}
+			}	
 		}
-		
 		return true;
 	}
 	
 	public String toString() {
-		String output = "\t\t";
 		
-		// get cluster names
-		for (String s : clusterList) {
-			output += s + "  ";
+		if (kTupleListIsEmpty) {
+			return "Table is empty";
+		} else {
+			String newLine = System.getProperty("line.separator");
+			String output = "\t\t";
+			// get cluster names
+			for (String s : clusterList) {
+				output += s + "  ";
+			}
+			output += newLine;
+			// get row data
+			for (int i = 0; i < kTupleList.length; i++) {
+				output += kTupleList[i] + "  " + genTable[i];
+				output += newLine;
+			}
+			return output;
 		}
-
-		output += "\n";
-		
-		// get row data
-		for (int i = 0; i < singleTupleList.length; i++) {
-			output += singleTupleList[i] + "  " + genTable[i];
-			output += "\n";
-		}
-		
-		return output;
 	}
 
 	private void fillGenTable() {
-		genTable = new GeneralizationRow[singleTupleList.length];
+		genTable = new GeneralizationRow[kTupleList.length];
 		
-		for (int i = 0; i < singleTupleList.length; i++) {
+		for (int i = 0; i < kTupleList.length; i++) {
 			genTable[i] = new GeneralizationRow(i);
 		}
 	}
 
+	// Assuming that there are more than 0 actual product ids
 	private void setClusterList() {
 		// get a DBManager
 		DBManager dbManager = new DBManager();
@@ -141,19 +160,25 @@ public class GeneralizationTable {
 		return allQuasiIds;
 	}
 	
-	private void setSingleTupleList() {
-		String singles = "";
+	private void setKTupleList() {
+		String kTuples = "";		
 		for (String s : clusterList) {
-			if ( !(s.contains(","))) {
-				singles += s + ";";
-			}
+			if (s.split(",").length < this.kAnon) {
+				kTuples += s + ";";
+			}			
 		}
-		singleTupleList = singles.split(";");
+		
+		if (kTuples.isEmpty()) {
+			kTupleListIsEmpty = true;
+		} else {
+			kTupleList = kTuples.split(";");
+			kTupleListIsEmpty = false;			
+		}
 	}
 	
 	private void setAttributeLists() {
 		clusterListAttributes = new String[clusterList.length][selectedIds.length];
-		singleTupleAttributes = new String[singleTupleList.length][selectedIds.length];
+		kTupleAttributes = new String[kTupleList.length][selectedIds.length];
 		
 		DBManager dbManager = new DBManager();
 		
@@ -164,14 +189,18 @@ public class GeneralizationTable {
 	    }
 	    quasiIds = quasiIds.substring( 1 );
 		
-		for (int i = 0; i < singleTupleList.length; i++) {
+		for (int i = 0; i < kTupleList.length; i++) {
+			String kTupleName = kTupleList[i];
+			if (kTupleName.contains(",")) {
+				kTupleName = kTupleList[i].substring(0, kTupleList[i].indexOf(",")); 
+			}
 			String[] attributes = dbManager.runQuery( "SELECT " + quasiIds + " " +
 													  "FROM Student " + 
 													  "WHERE " + QuasiId.PRODUCT_ID.getDBName() + 
-													  "='" + singleTupleList[i] + "'");
+													  "='" + kTupleName + "'");
 		
 			for (int j = 0; j < selectedIds.length; j++) {
-				singleTupleAttributes[i][j] = attributes[j]; 
+				kTupleAttributes[i][j] = attributes[j]; 
 			}
 		}
 		
@@ -187,17 +216,19 @@ public class GeneralizationTable {
 			for (int j = 0; j < selectedIds.length; j++) {
 				clusterListAttributes[i][j] = attributes[j];
 			}
-		}
+		}	
 		
 		dbManager.closeConnection(false);
 	}
 
 	private String[] clusterList;
-	private String[] singleTupleList;
+	private String[] kTupleList;
 	private QuasiId[] selectedIds;
 	private GeneralizationRow[] genTable;
 	private String[][] clusterListAttributes;
-	private String[][] singleTupleAttributes;
+	private String[][] kTupleAttributes;
+	private int kAnon;
+	private boolean kTupleListIsEmpty;
 	
 	
 	private class GeneralizationRow {
@@ -208,8 +239,8 @@ public class GeneralizationTable {
 			setGeneralizationStepsRow(singleTupleIndex);
 		}
 		
-		private void setGeneralizationStepsRow(int singleTupleIndex) {
-			String singleTuple = singleTupleList[singleTupleIndex];
+		private void setGeneralizationStepsRow(int kTupleIndex) {
+			String singleTuple = kTupleList[kTupleIndex];
 			for (int i = 0; i < clusterList.length; i++) {
 				genStepsRow[i] = new GeneralizationSteps();
 				for (int j = 0; j < selectedIds.length; j++) {
@@ -217,7 +248,7 @@ public class GeneralizationTable {
 					if (singleTuple.equals(clusterList[i])) {
 						steps = 0;
 					} else {
-						String attribute1 = singleTupleAttributes[singleTupleIndex][j];
+						String attribute1 = kTupleAttributes[kTupleIndex][j];
 						String attribute2 = clusterListAttributes[i][j];
 						steps = Generalizer.getNumGeneralization(attribute1, attribute2, selectedIds[j]);
 					}
@@ -226,12 +257,13 @@ public class GeneralizationTable {
 			}
 		}
 		
-		public int testSolution(GeneralizationSteps solution) {
+		public int testSolution(GeneralizationSteps solution, int kTuplePosition) {
 			int numSolutions = 0;
 			
 			for (int i = 0; i < genStepsRow.length; i++) {
 				if (solution.dominates(genStepsRow[i].getAllInfoLossLevels())) {
 					numSolutions += clusterList[i].split(",").length;	// cluster could be more than one
+					numSolutions += kTupleList[kTuplePosition].split(",").length;
 				}
 			}
 			
