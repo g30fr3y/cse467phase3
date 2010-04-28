@@ -38,6 +38,16 @@ public class Samarati
      */
     public static String[][] kanon(int kAnon, int maxSup, QuasiId... list)
     {
+    	// Added to optimize the return time of k = 1.
+    	// If k = 1, then we're just returning all data
+    	// untouched (or ungeneralized)
+    	if (kAnon < 2) {
+    		GeneralizationSteps simpleSolution = new GeneralizationSteps();
+    		for (QuasiId id : list) {
+    			simpleSolution.setGenSteps(id, 0);
+    		}
+    		return Generalizer.getGeneralizedDataArray( simpleSolution );
+    	}
 
         // Create a Samarati object and initialize the quasi-id(s)
         Samarati sam = new Samarati( list );
