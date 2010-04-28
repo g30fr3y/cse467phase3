@@ -5,12 +5,18 @@ public class GeneralizationTable {
 		this();
 		selectedIds = list;
 		this.kAnon = kAnon;
-		setClusterList();
-		setKTupleList();
 		
-		if ( !kTupleListIsEmpty ) {
-			setAttributeLists();
-			fillGenTable();			
+		// set up the table if k anon is greater than 1,
+		// otherwise if k is 1, then we're just returning 
+		// all data untouched (or ungeneralized)
+		if (this.kAnon > 1) {
+			setClusterList();
+			setKTupleList();
+			
+			if ( !kTupleListIsEmpty ) {
+				setAttributeLists();
+				fillGenTable();			
+			}			
 		}
 	}
 	
@@ -27,7 +33,7 @@ public class GeneralizationTable {
 
 	public boolean testSolution(GeneralizationSteps solution, int maxSuppression) {
 		int suppressionCount = 0;
-		if ( !kTupleListIsEmpty ) {	
+		if ( !kTupleListIsEmpty && (this.kAnon > 1) ) {	
 			for (int i = 0; i < kTupleList.length; i++) {
 				int numHits = genTable[i].testSolution(solution, i);
 				if (numHits < kAnon) {
