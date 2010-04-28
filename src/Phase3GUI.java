@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -116,6 +117,8 @@ public class Phase3GUI extends JFrame implements ActionListener {
 			long endTime = System.currentTimeMillis();
 			double totalTime = (endTime-startTime)/1000.0;
 			this.timeLabel.setText("ELAPSED TIME: " + totalTime);
+			this.maxSupLabel.setText("Max Suppression: " + maxSup);
+			this.kAnonLabel.setText("K: " + kanon);
 			
 			// output the data to the table
 			setTableData(data, ids);
@@ -231,9 +234,18 @@ public class Phase3GUI extends JFrame implements ActionListener {
 		repeatButton.setPreferredSize(new Dimension(100, 35));
 		repeatButton.addActionListener(this);
 		
+		JPanel labelPanel = new JPanel(new GridLayout(1,3));
+		this.getContentPane().add(labelPanel, BorderLayout.NORTH);
+		
 		timeLabel = new JLabel("ELAPSED TIME: ");
 		timeLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-		this.getContentPane().add(this.timeLabel, BorderLayout.NORTH);
+		labelPanel.add(this.timeLabel, BorderLayout.NORTH);
+		kAnonLabel = new JLabel("K: ");
+		kAnonLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		labelPanel.add(this.kAnonLabel, BorderLayout.NORTH);
+		maxSupLabel = new JLabel("Max Suppression: ");
+		maxSupLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		labelPanel.add(this.maxSupLabel, BorderLayout.NORTH);
 		
 		pack();
 		
@@ -244,5 +256,7 @@ public class Phase3GUI extends JFrame implements ActionListener {
 	private JScrollPane scrollPane;
 	private DBManager dbManager;
 	private JLabel timeLabel;
+	private JLabel kAnonLabel;
+	private JLabel maxSupLabel;
 	private JButton repeatButton;
 }

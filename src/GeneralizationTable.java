@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 
 public class GeneralizationTable {
 	
@@ -26,10 +28,8 @@ public class GeneralizationTable {
 		this.selectedIds = null;
 		this.genTable = null;
 		this.clusterListAttributes = null;
-		this.kTupleAttributes = null;
 		this.kAnon = 0;
 		this.kTupleListIsEmpty = true;
-		this.kTupleListSizes = null;
 		this.clusterListSizes = null;
 	}
 
@@ -57,20 +57,41 @@ public class GeneralizationTable {
 		return true;
 	}
 	
-	public String getSuppressedProductIds(GeneralizationSteps solution) {
-		String output = "";
-		 
+	public String[] getAttributesToGeneralize(GeneralizationSteps solution) {    
+		Vector<String> output = new Vector<String>();
+
 		if ( !kTupleListIsEmpty && (this.kAnon > 1) ) {	
-			for (int i = 0; i < kTupleList.length; i++) {
+			// load output with ALL attributes and number of appearances of 
+			// this attributes in the data
+			for (int i = 0; i < this.clusterListAttributes.length; i++) {
+				String line = this.clusterListSizes[i] + ",";
+				for (String s : this.clusterListAttributes[i]) {
+					line += s + ",";
+				}
+				output.add(line);
+			}
+			 
+			// zero out all suppressed attributes
+			int end = kTupleList.length-1;
+			for (int i = end; i > -1; i--) {
 				int numHits = genTable[i].testSolution(solution, i);
 				if (numHits < kAnon) {
-					// This tuple must be suppressed.  Add it to output
-					output += kTupleList[i] + ",";
+					// This tuple must be suppressed.  
+					output.remove(i);
 				}
 			}	
 		}
 		
-		return output;
+		String[] data = new String[output.size()];
+		for (int i = 0; i < output.size(); i++) {
+			data[i] = output.get(i);
+		}
+		
+		for (String s : data) {
+			System.out.println(s);
+		}
+		
+		return data;
 	}
 	
 	public String toString() {
@@ -194,25 +215,26 @@ public class GeneralizationTable {
 	}
 	
 	private void setKTupleList() {
-		String kTuples = "";		
-		for (String s : clusterList) {
-			if (s.split(",").length < this.kAnon) {
-				kTuples += s + ";";
+		Vector<Integer> kTuplePtrs = new Vector<Integer>();		
+		for (int i = 0; i < clusterList.length; i++) {
+			if (clusterList[i].split(",").length < this.kAnon) {
+				kTuplePtrs.add(i);
 			}			
 		}
 		
-		if (kTuples.isEmpty()) {
+		if (kTuplePtrs.isEmpty()) {
 			kTupleListIsEmpty = true;
 		} else {
-			kTupleList = kTuples.split(";");
-			this.setKTupleListSizes();
+			kTupleList = new int[kTuplePtrs.size()];
+			for (int i = 0; i < kTuplePtrs.size(); i++) {
+				kTupleList[i] = kTuplePtrs.get(i);
+			}
 			kTupleListIsEmpty = false;			
 		}
 	}
 	
 	private void setAttributeLists() {
 		clusterListAttributes = new String[clusterList.length][selectedIds.length];
-		kTupleAttributes = new String[kTupleList.length][selectedIds.length];
 		
 		DBManager dbManager = new DBManager();
 		
@@ -222,21 +244,6 @@ public class GeneralizationTable {
 	        quasiIds += "," + id.getDBName();
 	    }
 	    quasiIds = quasiIds.substring( 1 );
-		
-		for (int i = 0; i < kTupleList.length; i++) {
-			String kTupleName = kTupleList[i];
-			if (kTupleName.contains(",")) {
-				kTupleName = kTupleList[i].substring(0, kTupleList[i].indexOf(",")); 
-			}
-			String[] attributes = dbManager.runQuery( "SELECT " + quasiIds + " " +
-													  "FROM Student " + 
-													  "WHERE " + QuasiId.PRODUCT_ID.getDBName() + 
-													  "='" + kTupleName + "'");
-		
-			for (int j = 0; j < selectedIds.length; j++) {
-				kTupleAttributes[i][j] = attributes[j]; 
-			}
-		}
 		
 		for (int i = 0; i < clusterList.length; i++) {
 			String clusterName = clusterList[i];
@@ -261,20 +268,11 @@ public class GeneralizationTable {
 			clusterListSizes[i] = clusterList[i].split(",").length;
 		}
 	}
-	
-	private void setKTupleListSizes() {
-		kTupleListSizes = new int[kTupleList.length];
-		for (int i = 0; i < kTupleList.length; i++) {
-			kTupleListSizes[i] = kTupleList[i].split(",").length;
-		}
-	}
 
 	private String[] clusterList;
 	private int[] clusterListSizes;
 	private String[][] clusterListAttributes;
-	private String[] kTupleList;
-	private int[] kTupleListSizes;
-	private String[][] kTupleAttributes;
+	private int[] kTupleList;				// pointer to kTuples within clusterList
 	private QuasiId[] selectedIds;
 	private GeneralizationRow[] genTable;
 	private int kAnon;
@@ -289,7 +287,7 @@ public class GeneralizationTable {
 		}
 		
 		private void setup(int kTupleIndex, int genStepIndex) {
-			String kTuple = kTupleList[kTupleIndex];
+			String kTuple = clusterList[kTupleList[kTupleIndex]];
 			genStepsRow[genStepIndex] = new GeneralizationSteps();
 			if (kTuple.equals(clusterList[genStepIndex])) {
 				int steps = 0;
@@ -299,7 +297,7 @@ public class GeneralizationTable {
 			} else {
 				for (int j = 0; j < selectedIds.length; j++) {
 					int steps = 0;
-					String attribute1 = kTupleAttributes[kTupleIndex][j];
+					String attribute1 = clusterListAttributes[kTupleList[kTupleIndex]][j];
 					String attribute2 = clusterListAttributes[genStepIndex][j];
 					steps = Generalizer.getNumGeneralization(attribute1, attribute2, selectedIds[j]);
 					genStepsRow[genStepIndex].setGenSteps(selectedIds[j], steps);
@@ -309,9 +307,9 @@ public class GeneralizationTable {
 		
 		public int testSolution(GeneralizationSteps solution, int kTuplePosition) {
 			int numSolutions = 0;
-			
+
 			for (int i = 0; i < genStepsRow.length; i++) {
-				
+
 				if (genStepsRow[i] == null) {
 					setup(kTuplePosition, i);
 				}
@@ -319,7 +317,6 @@ public class GeneralizationTable {
 				
 				if (solution.dominates(genStepsRow[i].getAllInfoLossLevels())) {
 					numSolutions += clusterListSizes[i];	// cluster could be more than one
-					numSolutions += kTupleListSizes[kTuplePosition];
 				}
 				
 				// If the number of solutions found is greater than or equal

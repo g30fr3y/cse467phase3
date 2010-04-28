@@ -46,7 +46,7 @@ public class Samarati
     		for (QuasiId id : list) {
     			simpleSolution.setGenSteps(id, 0);
     		}
-    		return Generalizer.getGeneralizedDataArray( simpleSolution , "");
+    		return Generalizer.getGeneralizedDataArray( simpleSolution , null);
     	}
 
         // Create a Samarati object and initialize the quasi-id(s)
@@ -79,8 +79,12 @@ public class Samarati
             // Set the middle point
             currentLatticeLevel = lowestHeight + (maxHeight - lowestHeight) / 2;
 
+    		long startTime = System.currentTimeMillis();
             // Obtain solution permutations given height and list.length
             solutionSet = createPossibleSolutions( currentLatticeLevel, list.length );
+    		long endTime = System.currentTimeMillis();
+    		double totalTime = (endTime-startTime)/1000.0;
+//    		System.out.println("Time for createPossibleSolutions: " + totalTime);
 
             // Iterate through all solutions
             for ( int currentSol = 0; currentSol < solutionSet.length; currentSol++ )
@@ -92,7 +96,11 @@ public class Samarati
                 }
 
                 // Check if it is true
+	    		long startTime1 = System.currentTimeMillis();
                 isSolution = genTable.testSolution( currentSolution, maxSup );
+	    		long endTime1 = System.currentTimeMillis();
+	    		double totalTime1 = (endTime1-startTime1)/1000.0;
+//	    		System.out.println("Time for testing one solution: " + totalTime1);
 
                 // If we found a solution stop looking in this lattice level
                 if (isSolution)
@@ -117,7 +125,7 @@ public class Samarati
         }
 
         // Returns a string with the solution
-        return Generalizer.getGeneralizedDataArray( bestSolution,  genTable.getSuppressedProductIds(bestSolution));
+        return Generalizer.getGeneralizedDataArray( bestSolution,  genTable.getAttributesToGeneralize(bestSolution));
     }
 
     private static void printSolution(int[] solutionSet)
