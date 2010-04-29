@@ -313,7 +313,6 @@ public class GeneralizationTable {
 					setup(kTuplePosition, i);
 				}
 				
-				
 				if (solution.dominates(genStepsRow[i].getAllInfoLossLevels())) {
 					numSolutions += clusterListSizes[i];	// cluster could be more than one
 				}
