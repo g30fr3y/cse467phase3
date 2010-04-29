@@ -62,7 +62,10 @@ public class GeneralizationTable {
 
 		if ( !kTupleListIsEmpty && (this.kAnon > 1) ) {	
 			// load output with ALL attributes and number of appearances of 
-			// this attributes in the data
+			// these attributes in the data.
+			// For example one row of this output array might look like:
+			// "3,13,9,1980"
+			// This means "13,9,1980" appears 3 times in our data
 			for (int i = 0; i < this.clusterListAttributes.length; i++) {
 				String line = this.clusterListSizes[i] + ",";
 				for (String s : this.clusterListAttributes[i]) {
@@ -77,7 +80,7 @@ public class GeneralizationTable {
 				int numHits = genTable[i].testSolution(solution, i);
 				if (numHits < kAnon) {
 					// This tuple must be suppressed.  
-					output.remove(i);
+					output.remove(kTupleList[i]);
 				}
 			}	
 		}
@@ -85,10 +88,6 @@ public class GeneralizationTable {
 		String[] data = new String[output.size()];
 		for (int i = 0; i < output.size(); i++) {
 			data[i] = output.get(i);
-		}
-		
-		for (String s : data) {
-			System.out.println(s);
 		}
 		
 		return data;
