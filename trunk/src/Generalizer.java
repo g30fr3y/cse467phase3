@@ -299,29 +299,36 @@ public class Generalizer
     public static String[][] getGeneralizedDataArray(GeneralizationSteps solution, 
     												 String[] getAttributesToGeneralize)
     {
-        QuasiId[] enabledIds = solution.getEnabledQuasiIds();
-        
+    	// get all the enabled quasi-ids.  
+    	// the number of ids is useful data.
+    	// the comma separated string of ids is useful 
+    	// for database queries...
+        QuasiId[] enabledIds = solution.getEnabledQuasiIds(); 
         String quasiIds = "";
         for ( QuasiId id : enabledIds )
         {
             quasiIds += "," + id.getDBName();
         }
+        // get comma separated ids for db queries
         quasiIds = quasiIds.substring( 1 );
+        
+        // get number of ids for use later
+        int numQuasiIds = enabledIds.length;
         
     	// If getAttributesToGeneralize is null, just return all data
     	if (getAttributesToGeneralize == null) {
           DBManager dbManager = new DBManager();
   
           String[] data = dbManager.runQuery( "SELECT " + quasiIds + " FROM Student" );
-          String[][] output = new String[(data.length/enabledIds.length)][enabledIds.length];
+          String[][] output = new String[(data.length/numQuasiIds)][numQuasiIds];
           
   
           dbManager.closeConnection( false );
   
           int outputPointer = 0;
-          for ( int i = 0; i < data.length; i += enabledIds.length )
+          for ( int i = 0; i < data.length; i += numQuasiIds )
           {
-              for ( int j = 0; j < enabledIds.length; j++ )
+              for ( int j = 0; j < numQuasiIds; j++ )
               {
                   output[outputPointer][j] = data[i + j];
               }
@@ -329,30 +336,54 @@ public class Generalizer
           }
           return output;
     		
-    	} else {   
+    	} else {   	// if the getAttributesToGeneralize arg has data, we have to generalize
             
+    		// vector of string[] to hold our complete set of generalized output data
             Vector<String[]> generalizedData = new Vector<String[]>();
             
+            // go through the entire getAttributesToGeneralize
             for (int i = 0; i < getAttributesToGeneralize.length; i++) {
+            	
+            	// split the complete string into a string array
             	String[] temp1 = getAttributesToGeneralize[i].split(",");
-            	String[] temp2 = new String[temp1.length-1];
+
+            	// repeats holds the number of time to repeat the data set
+            	// to the output
             	int repeats = Integer.parseInt(temp1[0]);
-                for ( int j = 0; j < enabledIds.length; j++ ) {
+            	
+            	// temp2 will only hold the attribute data
+            	String[] temp2 = new String[temp1.length-1];
+            	
+            	// generalize each of the attributes and place into temp2
+                for ( int j = 0; j < numQuasiIds; j++ ) {
                     String generalizedAttribute = generalize( temp1[j+1], enabledIds[j], 
                     											solution.getGenStepValue( enabledIds[j] ) );
+                    // temp2 now contains the generalized attribute for position j
                     temp2[j] = generalizedAttribute;
                 }
+                
+                // now place the generalized string array into the 
+                // generalizedData vector for the number of times 
+                // it is repeated in the database.
                 for (int k = 0; k < repeats; k++) {
-                	generalizedData.add(new String[enabledIds.length]);
-                    for (int l = 0; l < enabledIds.length; l++) {
+                	// add a new string array to generalizedData
+                	generalizedData.add(new String[numQuasiIds]);
+                	
+                	// place the generalized attributes into the proper
+                	// position of the string array in generalizedData
+                    for (int l = 0; l < numQuasiIds; l++) {
                     	generalizedData.get(generalizedData.size()-1)[l] = temp2[l];
                     }
                 }
             }
             
-            String[][] output = new String[generalizedData.size()][enabledIds.length];
+            // Time to prepare the final 2D string array to be returned by the method
+            String[][] output = new String[generalizedData.size()][numQuasiIds];
+            
+            // Go through generalizedData and place all data into the 2D string
+            // array output
             for (int i = 0; i < generalizedData.size(); i++) {
-            	for (int j = 0; j < enabledIds.length; j++) {
+            	for (int j = 0; j < numQuasiIds; j++) {
             		output[i][j] = generalizedData.get(i)[j];
             	}
             }
