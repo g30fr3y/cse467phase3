@@ -70,6 +70,9 @@ public class Samarati
         int maxHeight = sam.latticeHeight;
         int lowestHeight = 0;
 
+        // this is faster...
+        ComboGeneratorTest combos = new ComboGeneratorTest(list);
+        
         // Doing BinarySearch
         while (lowestHeight < maxHeight)
         {
@@ -79,11 +82,14 @@ public class Samarati
             // Set the middle point
             currentLatticeLevel = lowestHeight + (maxHeight - lowestHeight) / 2;
 
-    		long startTime = System.currentTimeMillis();
+//    		long startTime = System.currentTimeMillis();
             // Obtain solution permutations given height and list.length
-            solutionSet = createPossibleSolutions( currentLatticeLevel, list.length );
-    		long endTime = System.currentTimeMillis();
-    		double totalTime = (endTime-startTime)/1000.0;
+//            solutionSet = createPossibleSolutions( currentLatticeLevel, list.length );
+            
+            solutionSet = combos.getCombosAt(currentLatticeLevel);
+            
+//    		long endTime = System.currentTimeMillis();
+//    		double totalTime = (endTime-startTime)/1000.0;
 //    		System.out.println("Time for createPossibleSolutions: " + totalTime);
 
             // Iterate through all solutions
@@ -122,6 +128,14 @@ public class Samarati
                 lowestHeight = currentLatticeLevel + 1;
             }
 
+        }
+        
+        // the highest level of generalization is the only solution
+        if (currentLatticeLevel == combos.getHeight()-1) {
+    		bestSolution = new GeneralizationSteps();
+        	for (QuasiId id : list) {
+            	bestSolution.setGenSteps(id, id.maxGeneralization);
+        	}
         }
 
         // Returns a string with the solution
