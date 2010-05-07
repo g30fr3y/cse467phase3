@@ -205,21 +205,4 @@ public class ComboGeneratorTest {
 		return combos;
 	}
 
-
-
-	public static void main(String[] args) {
-//		ComboGeneratorTest demo = new ComboGeneratorTest(2,2,3);
-//		ComboGeneratorTest demo = new ComboGeneratorTest(4,5,6,4,3,3);
-//		demo.printAllCombosAndSums();
-//		demo.printLattice();
-//		int[][] solutions = demo.getCombosAt(15);
-//		for (int j = 0; j < solutions.length; j++) {
-//			for (int i : solutions[j]) {
-//				System.out.print(i);
-//			}
-//			System.out.println(" ");
-//		}
-		
-	}
-
 }

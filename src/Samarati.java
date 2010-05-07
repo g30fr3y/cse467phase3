@@ -81,16 +81,8 @@ public class Samarati
 
             // Set the middle point
             currentLatticeLevel = lowestHeight + (maxHeight - lowestHeight) / 2;
-
-//    		long startTime = System.currentTimeMillis();
-            // Obtain solution permutations given height and list.length
-//            solutionSet = createPossibleSolutions( currentLatticeLevel, list.length );
             
             solutionSet = combos.getCombosAt(currentLatticeLevel);
-            
-//    		long endTime = System.currentTimeMillis();
-//    		double totalTime = (endTime-startTime)/1000.0;
-//    		System.out.println("Time for createPossibleSolutions: " + totalTime);
 
             // Iterate through all solutions
             for ( int currentSol = 0; currentSol < solutionSet.length; currentSol++ )
@@ -102,11 +94,7 @@ public class Samarati
                 }
 
                 // Check if it is true
-	    		long startTime1 = System.currentTimeMillis();
                 isSolution = genTable.testSolution( currentSolution, maxSup );
-	    		long endTime1 = System.currentTimeMillis();
-	    		double totalTime1 = (endTime1-startTime1)/1000.0;
-//	    		System.out.println("Time for testing one solution: " + totalTime1);
 
                 // If we found a solution stop looking in this lattice level
                 if (isSolution)
@@ -165,81 +153,6 @@ public class Samarati
         this.latticeHeight = levels + 1;
     }
 
-    /**
-     * Using external Classes, this will determine the number of possible levels of generalization that we can test for
-     * using combinations and permutations. For example, let's say we have 3 Quasi-Identifiers and the lattice height is
-     * 12 and we are testing the possible solutions at height 4. So we must figure all the possible combinations of
-     * adding three numbers to come up with 4. One instance is [4,0,0], now for that instance we must get it's
-     * permutations: [4,0,0],[0,4,0]... and so on.
-     * 
-     * @param latticeLocation
-     *            The height for which you want to find all possible solutions.
-     * @param numTerms
-     *            The number of Quasi-Identifiers given.
-     * @return
-     */
-    private static int[][] createPossibleSolutions(int latticeLocation, int numTerms)
-    {
-
-        // First determine the number of combinations
-        Vector<int[]> validCombos = new Vector<int[]>();
-
-        // Create element list
-        int[] elements = new int[(latticeLocation + 1) * numTerms];
-        
-        // Add a set of 0-n numbers to the array, one for every quasi-id
-        int k = 0;
-        for( int j = 0; j < numTerms; j++ )
-        {
-            for ( int i = 0 ; i <= latticeLocation; i++, k++ )
-                elements[k] = i;
-        }
-
-        // Generate combination object
-        CombinationGenerator comboGen = new CombinationGenerator( elements.length, numTerms );
-
-        // Create combinations
-        while (comboGen.hasMore())
-        {
-            // Get the indices of the possible combination
-            int[] indices = comboGen.getNext();
-            int cumSum = 0;
-
-            // Check if the sum of this combination adds up to the height of the lattice
-            for ( int i = 0; i < indices.length; i++ )
-            {
-                cumSum += elements[indices[i]];
-            }
-
-            // If the sum of the permutation adds up to the lattice height then we keep it
-            if (cumSum == latticeLocation)
-            {
-                // Add a copy of that array to the list
-                validCombos.add(new int[indices.length]);
-                for ( int j = 0; j < indices.length; j++ )
-                {
-                    validCombos.lastElement()[j] = elements[indices[j]];
-                }
-//                validCombos.add( indices.clone() );
-                
-            }
-        }
-        
-        // Delete duplicates, I think this is less costly than testing dupes
-        validCombos = removeDuplicates( validCombos );
-        
-        
-        int[][] solutionSet = new int[validCombos.size()][];
-        int i = 0;
-        // Convert Vector to an array
-        for ( int[] array : validCombos )
-        {
-            solutionSet[i++] = array.clone();
-        }
-
-        return solutionSet;
-    }
-    
     private static Vector<int[]> removeDuplicates( Vector<int[]> vector)
     {
         for ( int i = 0; i < vector.size(); i++ )
